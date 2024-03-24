@@ -1,4 +1,4 @@
 public class Kasutaja {
-    String nimi;
+    private String nimi;
 
 }
