@@ -24,7 +24,7 @@ public class Taimer {
 
     public void alustaLoendust() {
         System.out.print("\033[1;1H");  // Paneb kursori ülemisse vasakusse nurka
-        System.out.println("\033[0J");  // Kustuta kõik alates kursorist
+        System.out.print("\033[0J");  // Kustuta kõik alates kursorist
         System.out.print("\033[2E");  // Aseta kursor kaks rida edasi vasakusse äärde
         System.out.print("Sisend: ");
         taimer.scheduleAtFixedRate(loendaja, 0, 1000);  // Alustab loeandust
