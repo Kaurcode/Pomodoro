@@ -1,11 +1,20 @@
+
+// https://en.wikipedia.org/wiki/ANSI_escape_code - Escape koodid -> kursori asukoha ning värvide muutmiseks
+
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Taimer {
+    String tavalineVarv = "\033[0m";
+    String rohelineVarv = "\033[92m";
+    String punaneVarv = "\033[91m";
+    String lillaVarv = "\033[95m";
+    String kollaneVarv = "\033[93m";
+
     private int aegaJarel;
     private int esialgneAeg;
-    Scanner loeKlaviatuurilt = new Scanner(System.in);
+    Scanner klaviatuuriSisend = new Scanner(System.in);
     private Timer taimer = new Timer();
 
     TimerTask loendaja = new TimerTask() {
@@ -25,11 +34,17 @@ public class Taimer {
     public void alustaLoendust() {
         System.out.print("\033[1;1H");  // Paneb kursori ülemisse vasakusse nurka
         System.out.print("\033[0J");  // Kustuta kõik alates kursorist
+
         System.out.print("\033[2E");  // Aseta kursor kaks rida edasi vasakusse äärde
+        System.out.print(rohelineVarv);
         System.out.print("Sisend: ");
-        taimer.scheduleAtFixedRate(loendaja, 0, 1000);  // Alustab loeandust
-        while (!loeKlaviatuurilt.hasNextLine());  // Väga halb variant, tuleks midagi paremat välja mõelda
+        System.out.print(tavalineVarv);
+        taimer.scheduleAtFixedRate(loendaja, 0, 1000);  // Alustab loendust
+        while(!klaviatuuriSisend.hasNextLine());  // Suht halb variant, võiks midagi paremat välja mõelda
         taimer.cancel();  // Lõpetab loenduse
+
+        System.out.print("\033[1;1H");  // Paneb kursori ülemisse vasakusse nurka
+        System.out.print("\033[0J");  // Kustuta kõik alates kursorist
     }
 
     public void valjastaAeg(int aegSekundites) {
@@ -46,7 +61,11 @@ public class Taimer {
 
         // Näitsab protsentribal, kui palju aega eesmärgist on kulunud
         int protsent = Math.max(0, Math.round(100 * ((float) aegSekundites / esialgneAeg)));
-        System.out.printf("[%s%s]\n", "#".repeat(100 - protsent), "-".repeat(protsent));
+
+        System.out.printf("%s[%s", lillaVarv, tavalineVarv);
+        System.out.printf("%s%s", rohelineVarv, "=".repeat(100 - protsent));
+        System.out.printf("%s%s", punaneVarv, "-".repeat(protsent));
+        System.out.printf("%s]%s", lillaVarv, tavalineVarv);
 
         // Arvutab minutid ja sekundid
         aegSekundites = Math.abs(aegSekundites);
@@ -55,7 +74,8 @@ public class Taimer {
 
         // Näitab aega protsentriba all, joondatud keskele
         int minutiMarke = Math.max(2, String.valueOf(minuteid).length());
-        System.out.printf("%s%c%02d:%02d", " ".repeat(50 - minutiMarke), mark, minuteid, sekundeid);
+        System.out.printf("\n%s", " ".repeat(50 - minutiMarke));  // Kursor keskele
+        System.out.printf("%s%c%02d:%02d%s", lillaVarv, mark, minuteid, sekundeid, tavalineVarv);
 
         System.out.print("\033[u");  // Taastab kursori salvestatud positsiooni, läheb algsesse kohta tagasi
     }
