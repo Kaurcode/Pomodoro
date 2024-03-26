@@ -9,7 +9,7 @@ public class EscKoodid {
     public static void rgbValjund(String tekst, int r, int g, int b) {
         System.out.printf("\033[38;2;%d;%d;%dm", r, g, b);
         System.out.print(tekst);
-        tavalineValjund();
+        System.out.println(tagastaTavaline());
     }
 
     public static String tagastaRGBTaust(String tekst, int r, int g, int b) {
@@ -19,8 +19,8 @@ public class EscKoodid {
     /**
      * Muudab väljundi värvi tagasi normaalseks (default) väärtuseks
      */
-    public static void tavalineValjund() {
-        System.out.print("\033[0m");
+    public static String tagastaTavaline() {
+        return "\033[0m";
     }
 
     /**
@@ -30,7 +30,7 @@ public class EscKoodid {
     public static void heleRohelineValjund(String tekst) {
         System.out.print("\033[92m");
         System.out.print(tekst);
-        tavalineValjund();
+        System.out.println(tagastaTavaline());
     }
 
     /**
@@ -40,7 +40,7 @@ public class EscKoodid {
     public static void helePunaneValjund(String tekst) {
         System.out.print("\033[91m");
         System.out.print(tekst);
-        tavalineValjund();
+        System.out.println(tagastaTavaline());
     }
 
     /**
@@ -50,7 +50,7 @@ public class EscKoodid {
     public static void heleLillaValjund(String tekst) {
         System.out.print("\033[95m");
         System.out.print(tekst);
-        tavalineValjund();
+        System.out.println(tagastaTavaline());
     }
 
     /**
@@ -60,7 +60,15 @@ public class EscKoodid {
     public static void heleKollaneValjund(String tekst) {
         System.out.print("\033[93m");
         System.out.print(tekst);
-        tavalineValjund();
+        System.out.println(tagastaTavaline());
+    }
+
+    public static String peidaKursor() {
+        return "\033[?25l";
+    }
+
+    public static String naitaKursor() {
+        return "\033[?25h";
     }
 
 }

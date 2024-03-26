@@ -48,8 +48,11 @@ public class Taimer {
     }
 
     public void valjastaAeg(int aegSekundites) {
-        StringBuilder valjund = new StringBuilder();
+        int valjundiLaius = 152;
+        StringBuilder valjund = new StringBuilder();  // Et saaks väljastada kogu väljund korraga (vähem probleeme)
         valjund.append("\033[s");  // Salvestab kursori positsiooni (Et saaks hiljem konsooli kirjutada)
+        valjund.append(EscKoodid.peidaKursor());  // Peidab kursori -> ei ole näha liikumist
+
         // Kui loendab, aega, siis on ees miinus märk ("-"), kui on üle aja läinud, siis on ees pluss märk ("+")
         char mark = switch(Integer.signum(aegSekundites)) {
             case 1 -> '-';
@@ -63,9 +66,7 @@ public class Taimer {
         int protsent = 100 - Math.max(0, Math.round(100 * ((float) aegSekundites / esialgneAeg)));
 
         valjund.append(String.format("%s[%s", lillaVarv, tavalineVarv));
-        valjund.append(CLIElemendid.edenemisRiba(protsent, 100, 1, esialgneAeg - aegaJarel, 2));
-//        System.out.printf("%s%s", rohelineVarv, "■".repeat(100 - protsent));
-//        System.out.printf("%s%s", punaneVarv, "-".repeat(protsent));
+        valjund.append(CLIElemendid.edenemisRiba(protsent, valjundiLaius - 2, 1, esialgneAeg - aegaJarel, 1));
         valjund.append(String.format("%s]%s", lillaVarv, tavalineVarv));
 
         // Arvutab minutid ja sekundid
@@ -75,10 +76,11 @@ public class Taimer {
 
         // Näitab aega protsentriba all, joondatud keskele
         int minutiMarke = Math.max(2, String.valueOf(minuteid).length());
-        valjund.append(String.format("\n%s", " ".repeat(50 - minutiMarke)));  // Kursor keskele
+        valjund.append(String.format("\n%s", " ".repeat(valjundiLaius / 2 - minutiMarke)));  // Kursor keskele
         valjund.append(String.format("%s%c%02d:%02d%s", lillaVarv, mark, minuteid, sekundeid, tavalineVarv));
 
         valjund.append("\033[u");  // Taastab kursori salvestatud positsiooni, läheb algsesse kohta tagasi
+        valjund.append(EscKoodid.naitaKursor());  // Näitab uuesti kursorit
         System.out.print(valjund);
     }
 }
