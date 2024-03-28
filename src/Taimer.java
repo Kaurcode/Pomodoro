@@ -48,7 +48,7 @@ public class Taimer {
     }
 
     public void valjastaAeg(int aegSekundites) {
-        int valjundiLaius = 152;
+        int valjundiLaius = 102;
         StringBuilder valjund = new StringBuilder();  // Et saaks väljastada kogu väljund korraga (vähem probleeme)
         valjund.append("\033[s");  // Salvestab kursori positsiooni (Et saaks hiljem konsooli kirjutada)
         valjund.append(EscKoodid.peidaKursor());  // Peidab kursori -> ei ole näha liikumist
