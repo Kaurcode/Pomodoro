@@ -12,4 +12,8 @@ public class Ulesanne {
     public void lisaPomodoro(Pomodoro pomodoro) {
         pomodorod.add(pomodoro);
     }
+
+    public String getNimi() {
+        return nimi;
+    }
 }

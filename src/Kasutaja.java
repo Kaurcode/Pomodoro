@@ -15,7 +15,7 @@ public class Kasutaja {
     public static Kasutaja looKasutaja(String nimi) {
         Failihaldur kasutajaFail = Failihaldur.looFail(kasutajateKaustaNimi, nimi);
         if (kasutajaFail == null) return null;
-        kasutajaFail.kirjutaRida(String.format("Nimi: %s", nimi));
+        kasutajaFail.kirjutaRida(String.format("Nimi: %s\n\n", nimi));
         return new Kasutaja(nimi, kasutajaFail);
     }
 
@@ -29,5 +29,7 @@ public class Kasutaja {
 
     public void lisaUlesanne(Ulesanne ulesanne) {
         ulesanded.add(ulesanne);
+        kasutajaFail.kirjutaRida(String.format("%sUlesanne|Algus%s", "-".repeat(25), "-".repeat(25)));
+        kasutajaFail.kirjutaRida(String.format("Nimi: %s", ulesanne.getNimi()));
     }
 }
