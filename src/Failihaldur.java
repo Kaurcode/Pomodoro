@@ -1,9 +1,7 @@
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Failihaldur {
     private File fail;
@@ -13,12 +11,25 @@ public class Failihaldur {
     }
 
     public Failihaldur(String failiNimi) {
-        fail = new File(failiNimi);
+        this(new File(failiNimi));
     }
 
     public static File[] loeKaust(String kaustaNimi) {
         File kaust = new File(kaustaNimi);
         return kaust.listFiles();
+    }
+
+    public static Failihaldur[] looKaustastFailihaldurid(File[] failid) {
+        Failihaldur[] failihaldurid = new Failihaldur[failid.length];
+        for (int failiIndeks = 0; failiIndeks < failid.length; failiIndeks++) {
+            failihaldurid[failiIndeks] = new Failihaldur(failid[failiIndeks]);
+        }
+        return failihaldurid;
+    }
+
+    public static Failihaldur[] looKaustastFailihaldurid(String kaustaNimi) {
+        File[] failid = loeKaust(kaustaNimi);
+        return looKaustastFailihaldurid(failid);
     }
 
     public static void kontrolliKaust(String kaustaNimi) {
@@ -63,5 +74,19 @@ public class Failihaldur {
         } catch (IOException viga) {
             System.out.println("Viga: " + viga.getMessage());
         }
+    }
+
+    public ArrayList<String> loeKoikReadFailist() {
+        ArrayList<String> read = new ArrayList<String>();
+
+        try (Scanner luger = new Scanner(fail)) {
+            while (luger.hasNextLine()) {
+                read.add(luger.nextLine());
+            }
+        } catch (FileNotFoundException viga) {
+            System.out.printf("Viga: %s\n", viga.getMessage());
+        }
+
+        return read;
     }
 }

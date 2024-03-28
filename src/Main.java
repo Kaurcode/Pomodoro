@@ -1,12 +1,13 @@
 import java.io.File;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Failihaldur.kontrolliKaust(Kasutaja.kasutajateKaustaNimi);
-        File[] kasutajad = Failihaldur.loeKaust(Kasutaja.kasutajateKaustaNimi);
-        Kasutaja.looKasutaja("kaur");
+        Failihaldur.kontrolliKaust(Kasutaja.KASUTAJATE_KAUSTA_NIMI);
+        File[] kasutajad = Failihaldur.loeKaust(Kasutaja.KASUTAJATE_KAUSTA_NIMI);
+        Kasutaja kasutaja = Kasutaja.looKasutaja("kaur");
+        Ulesanne ulesanne = kasutaja.lisaUlesanne("Katse");
+
 
         CLIElemendid.looRGB();
         Scanner klaviatuuriSisend = new Scanner(System.in);
