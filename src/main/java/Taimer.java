@@ -32,19 +32,24 @@ public class Taimer {
     }
 
     public void alustaLoendust() {
-        System.out.print("\033[1;1H");  // Paneb kursori ülemisse vasakusse nurka
-        System.out.print("\033[0J");  // Kustuta kõik alates kursorist
+        StringBuilder valjund = new StringBuilder();
+        valjund.append(EscKoodid.muudaKursoriAsukohta(1, 1));
+        valjund.append(EscKoodid.kustutaValjundAlatesKursorist());  // Kustuta kõik alates kursorist
 
-        System.out.print("\033[2E");  // Aseta kursor kaks rida edasi vasakusse äärde
-        System.out.print(rohelineVarv);
-        System.out.print("Sisend: ");
-        System.out.print(tavalineVarv);
+        valjund.append(EscKoodid.liigutaKursorAllaReaAlgusesse(2));  // Aseta kursor kaks rida edasi vasakusse äärde
+        valjund.append(EscKoodid.heleRohelineTekst());
+        valjund.append("Sisend: ");
+        valjund.append(EscKoodid.tagastaTavaline());
+        System.out.print(valjund);
+        valjund.delete(0, valjund.length());
         taimer.scheduleAtFixedRate(loendaja, 0, 10);  // Alustab loendust
         while(!klaviatuuriSisend.hasNextLine());  // Suht halb variant, võiks midagi paremat välja mõelda
         taimer.cancel();  // Lõpetab loenduse
 
-        System.out.print("\033[1;1H");  // Paneb kursori ülemisse vasakusse nurka
-        System.out.print("\033[0J");  // Kustuta kõik alates kursorist
+        valjund.append(EscKoodid.muudaKursoriAsukohta(1, 1));  // Paneb kursori ülemisse vasakusse nurka
+        valjund.append(EscKoodid.kustutaValjundAlatesKursorist());  // Kustuta kõik alates kursorist
+        System.out.print(valjund);
+        valjund.delete(0, valjund.length());
     }
 
     public void valjastaAeg(int aegSekundites) {
@@ -82,5 +87,6 @@ public class Taimer {
         valjund.append("\033[u");  // Taastab kursori salvestatud positsiooni, läheb algsesse kohta tagasi
         valjund.append(EscKoodid.naitaKursor());  // Näitab uuesti kursorit
         System.out.print(valjund);
+        valjund.delete(0, valjund.length());
     }
 }

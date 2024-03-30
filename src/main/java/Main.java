@@ -3,10 +3,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Failihaldur.kontrolliKaust(Kasutaja.KASUTAJATE_KAUSTA_NIMI);
-        File[] kasutajad = Failihaldur.loeKaust(Kasutaja.KASUTAJATE_KAUSTA_NIMI);
-        Kasutaja kasutaja = Kasutaja.looKasutaja("kaur");
-        Ulesanne ulesanne = kasutaja.lisaUlesanne("Katse");
+//        Failihaldur.kontrolliKaust(Kasutaja.KASUTAJATE_KAUSTA_NIMI);
+//        File[] kasutajad = Failihaldur.loeKaust(Kasutaja.KASUTAJATE_KAUSTA_NIMI);
+//        Kasutaja kasutaja = Kasutaja.looKasutaja("kaur");
+//        Ulesanne ulesanne = kasutaja.lisaUlesanne("Katse");
 
 
         CLIElemendid.looRGB();
