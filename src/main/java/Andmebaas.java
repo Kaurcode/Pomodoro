@@ -7,6 +7,7 @@ import org.postgresql.util.PGInterval;
 
 import java.sql.*;
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Andmebaas {
@@ -247,14 +248,14 @@ public class Andmebaas {
         return olemiID;
     }
 
-    public ArrayList<String> tagastaKasutajateOlemid() {
-        ArrayList<String> kasutajad = new ArrayList<String>();
+    public ArrayList<Kasutaja> tagastaKasutajateOlemid() {
+        ArrayList<Kasutaja> kasutajad = new ArrayList<Kasutaja>();
         final String tagastaKasutajateOlemid = "SELECT nimi FROM kasutajad";
 
         try (PreparedStatement tagastaKasutajateOlemidLause = andmebaas.prepareStatement(tagastaKasutajateOlemid)) {
             try (ResultSet tagastaOlemidLauseTulem = tagastaKasutajateOlemidLause.executeQuery()) {
                 while (tagastaOlemidLauseTulem.next()) {
-                    kasutajad.add(tagastaOlemidLauseTulem.getString("nimi"));
+                    kasutajad.add(new Kasutaja(tagastaOlemidLauseTulem.getString("nimi")));
                 }
             } catch (SQLException viga) {
                 System.out.println("Kasutajate olemite tagastamisel tekkis viga: " + viga.getMessage());
@@ -264,6 +265,38 @@ public class Andmebaas {
         }
 
         return kasutajad;
+    }
+
+    public ArrayList<Ulesanne> tagastaUlesanneteOlemid() throws SQLException {
+        ArrayList<Ulesanne> ulesanded = new ArrayList<>();
+        final String tagastaUlesanneteOlemid = "Select ulesanne_nimi from ulesanded";
+
+        try (PreparedStatement tagastaUlesanneteOlemidLause = andmebaas.prepareStatement(tagastaUlesanneteOlemid)) {
+            try (ResultSet tagastaOlemidLauseTulem = tagastaUlesanneteOlemidLause.executeQuery()) {
+                while (tagastaOlemidLauseTulem.next()) {
+                    ulesanded.add(new Ulesanne(tagastaOlemidLauseTulem.getString("ulesanne_nimi")));
+                }
+            }
+        }
+
+        return ulesanded;
+    }
+
+    public ArrayList<Pomodoro> tagastaPomodorodeOlemid() {
+        ArrayList<Pomodoro> pomodorod = new ArrayList<>();
+        final String tagastaPomodorodeOlemid = "Select produktiivne_aeg, puhke_aeg from pomodorod";
+
+        try (PreparedStatement tagastaPomodorodeOlemidLause = andmebaas.prepareStatement(tagastaPomodorodeOlemid)) {
+            try (ResultSet tagastaOlemidLauseTulem = tagastaPomodorodeOlemidLause.executeQuery()) {
+                while (tagastaOlemidLauseTulem.next()) {
+                    pomodorod.add(new Pomodoro(LocalTime.parse(tagastaOlemidLauseTulem.getString("produktiivne_aeg")), LocalTime.parse(tagastaOlemidLauseTulem.getString("puhke_aeg")), false));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return pomodorod;
     }
 
 }
