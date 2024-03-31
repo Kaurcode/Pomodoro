@@ -27,7 +27,7 @@ public class Andmebaas {
     }
 
     public Andmebaas() {
-        this("postgres", "sql", "pomodoro");
+        this("postgres", "parool", "pomodoro");
     }
 
     public Connection looUhendus(String kasutaja, String parool, String nimi) {
@@ -250,12 +250,12 @@ public class Andmebaas {
 
     public ArrayList<Kasutaja> tagastaKasutajateOlemid() {
         ArrayList<Kasutaja> kasutajad = new ArrayList<Kasutaja>();
-        final String tagastaKasutajateOlemid = "SELECT nimi FROM kasutajad";
+        final String tagastaKasutajateOlemid = "SELECT nimi, kasutaja_id FROM kasutajad";
 
         try (PreparedStatement tagastaKasutajateOlemidLause = andmebaas.prepareStatement(tagastaKasutajateOlemid)) {
             try (ResultSet tagastaOlemidLauseTulem = tagastaKasutajateOlemidLause.executeQuery()) {
                 while (tagastaOlemidLauseTulem.next()) {
-                    kasutajad.add(new Kasutaja(tagastaOlemidLauseTulem.getString("nimi")));
+                    kasutajad.add(new Kasutaja(tagastaOlemidLauseTulem.getString("nimi"), Integer.parseInt(tagastaOlemidLauseTulem.getString("kasutaja_id"))));
                 }
             } catch (SQLException viga) {
                 System.out.println("Kasutajate olemite tagastamisel tekkis viga: " + viga.getMessage());
@@ -267,14 +267,14 @@ public class Andmebaas {
         return kasutajad;
     }
 
-    public ArrayList<Ulesanne> tagastaUlesanneteOlemid() throws SQLException {
+    public ArrayList<Ulesanne> tagastaUlesanneteOlemid(int kasutajaID) throws SQLException {
         ArrayList<Ulesanne> ulesanded = new ArrayList<>();
-        final String tagastaUlesanneteOlemid = "Select ulesanne_nimi from ulesanded";
+        final String tagastaUlesanneteOlemid = "Select ulesanne_nimi, ulesanne_id from ulesanded WHERE kasutaja_id = " + kasutajaID;
 
         try (PreparedStatement tagastaUlesanneteOlemidLause = andmebaas.prepareStatement(tagastaUlesanneteOlemid)) {
             try (ResultSet tagastaOlemidLauseTulem = tagastaUlesanneteOlemidLause.executeQuery()) {
                 while (tagastaOlemidLauseTulem.next()) {
-                    ulesanded.add(new Ulesanne(tagastaOlemidLauseTulem.getString("ulesanne_nimi")));
+                    ulesanded.add(new Ulesanne(tagastaOlemidLauseTulem.getString("ulesanne_nimi"), Integer.parseInt(tagastaOlemidLauseTulem.getString("ulesanne_id"))));
                 }
             }
         }
@@ -282,14 +282,14 @@ public class Andmebaas {
         return ulesanded;
     }
 
-    public ArrayList<Pomodoro> tagastaPomodorodeOlemid() {
+    public ArrayList<Pomodoro> tagastaPomodorodeOlemid(int ulesanneID) {
         ArrayList<Pomodoro> pomodorod = new ArrayList<>();
-        final String tagastaPomodorodeOlemid = "Select produktiivne_aeg, puhke_aeg from pomodorod";
+        final String tagastaPomodorodeOlemid = "Select produktiivne_aeg, puhke_aeg from pomodorod WHERE ulesanne_ID = " + ulesanneID;
 
         try (PreparedStatement tagastaPomodorodeOlemidLause = andmebaas.prepareStatement(tagastaPomodorodeOlemid)) {
             try (ResultSet tagastaOlemidLauseTulem = tagastaPomodorodeOlemidLause.executeQuery()) {
                 while (tagastaOlemidLauseTulem.next()) {
-                    pomodorod.add(new Pomodoro(LocalTime.parse(tagastaOlemidLauseTulem.getString("produktiivne_aeg")), LocalTime.parse(tagastaOlemidLauseTulem.getString("puhke_aeg")), false));
+                    pomodorod.add(new Pomodoro(Integer.parseInt(tagastaOlemidLauseTulem.getString("produktiivne_aeg")), Integer.parseInt(tagastaOlemidLauseTulem.getString("puhke_aeg")), false));
                 }
             }
         } catch (SQLException e) {
