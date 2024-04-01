@@ -142,6 +142,7 @@ public class Andmebaas implements AutoCloseable {
                 "kordused INT," +
                 "produktiivne_aeg_kokku INTERVAL," +
                 "ulesanne_id INT NOT NULL," +
+                "sisestuse_aeg TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                 "FOREIGN KEY (ulesanne_id) REFERENCES ulesanded(ulesanne_id)" +
                 ");";
 
@@ -327,7 +328,7 @@ public class Andmebaas implements AutoCloseable {
     public ArrayList<Pomodoro> tagastaPomodorodeOlemid(int ulesanneID) {
         ArrayList<Pomodoro> pomodorod = new ArrayList<>();
         final String tagastaPomodorodeOlemid = "Select pomodoro_id, produktiivne_aeg, puhke_aeg, kordused, " +
-                "produktiivne_aeg_kokku from pomodorod WHERE ulesanne_ID = ?";
+                "produktiivne_aeg_kokku, sisestuse_aeg from pomodorod WHERE ulesanne_ID = ?";
 
         try (PreparedStatement tagastaPomodorodeOlemidLause = andmebaas.prepareStatement(tagastaPomodorodeOlemid)) {
             tagastaPomodorodeOlemidLause.setInt(1, ulesanneID);
@@ -348,7 +349,10 @@ public class Andmebaas implements AutoCloseable {
                             tagastaOlemidLauseTulem.getString("produktiivne_aeg_kokku");
                     Duration produktiivneAegKokku = postgreFormaadiTeisendus(produktiivneAegKokkuString);
 
-                    pomodorod.add(new Pomodoro(pomodoroID, produktiivneAeg, puhkeAeg, kordused, produktiivneAegKokku));
+                    Timestamp sisestuseAeg = tagastaOlemidLauseTulem.getTimestamp("sisestuse_aeg");
+
+                    pomodorod.add(new Pomodoro(pomodoroID, produktiivneAeg, puhkeAeg, kordused, produktiivneAegKokku,
+                            sisestuseAeg));
                 }
             } catch (SQLException viga) {
                 System.out.println("Pomodorode olemite tagastamisel tekkis viga: " + viga.getMessage());
