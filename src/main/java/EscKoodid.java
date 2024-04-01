@@ -40,51 +40,7 @@ public class EscKoodid {
     }
 
     public static String tagastaKursoriAsukoht() {
-        System.out.print("\033[6n");
-        System.out.flush();
-        StringBuilder sisend = new StringBuilder();
-        int tahtInt;
-        char taht;
-        try {
-            while (true) {
-                tahtInt = System.in.read();
-                taht = (char) tahtInt;
-                if (taht == 'R') break;
-                sisend.append(taht);
-            }
-        } catch (IOException viga) {
-            System.out.printf("Sisendi lugemisel tekkis viga: %s", viga);
-        }
-
-        return sisend.toString();
-    }
-
-    public static String getCursorPosition() {
-        System.out.print("\033[6n");
-        System.out.flush();
-
-        StringBuilder inputBuffer = new StringBuilder();
-
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            int character;
-
-            // Read characters until 'R' is encountered
-            while ((character = reader.read()) != 'R') {
-                if (character == -1) {
-                    // End of stream reached before 'R'
-                    return null;
-                }
-                inputBuffer.append((char) character);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        // Extract position from input buffer
-        String response = inputBuffer.toString();
-        return response;
+        return "\033[6n";
     }
 
     public static String kustutaValjundAlatesKursorist() {
