@@ -1,37 +1,58 @@
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.Duration;
 
 public class Pomodoro {
-    private LocalDateTime kuupaev;
+    private int pomodoroID;
+    private Duration produktiivneAeg;
+    private Duration puhkeAeg;
 
-    private LocalTime produktiivsusAegSekundites;
-    private LocalTime puhkeAegSekundites;
+    private int kordused;
+    private Duration produktiivsusAegKokku;
+    private int ulesandeID;
 
-    private int pomodoroTsukleid;
-    private int produktiivsusAegKokku = 0;
-
-    private boolean kasTehtud;
-
-    public Pomodoro(LocalTime produktiivsusAegSekundites, LocalTime puhkeAegSekundites, boolean kasTehtud) {
-        this.kuupaev = LocalDateTime.now();
-        this.produktiivsusAegSekundites = (produktiivsusAegSekundites);
-        this.puhkeAegSekundites = (puhkeAegSekundites);
-        this.kasTehtud = kasTehtud;
+    public Pomodoro(int pomodoroID, Duration produktiivneAeg, Duration puhkeAeg, int kordused,
+                    Duration produktiivsusAegKokku, int ulesandeID) {
+        this.pomodoroID = pomodoroID;
+        this.produktiivneAeg = produktiivneAeg;
+        this.puhkeAeg = puhkeAeg;
+        this.kordused = kordused;
+        this.produktiivsusAegKokku = produktiivsusAegKokku;
+        this.ulesandeID = ulesandeID;
     }
 
-    public Pomodoro(LocalTime produktiivsusAegSekundites, LocalTime puhkeAegSekundites) {
-        this(produktiivsusAegSekundites, puhkeAegSekundites, false);
+    public Pomodoro(Duration produktiivneAeg, Duration puhkeAeg, int kordused, Duration produktiivsusAegKokku,
+                    int ulesandeID) {
+        this.produktiivneAeg = produktiivneAeg;
+        this.puhkeAeg = puhkeAeg;
+        this.kordused = kordused;
+        this.produktiivsusAegKokku = produktiivsusAegKokku;
+        this.ulesandeID = ulesandeID;
     }
 
-    public LocalTime getProduktiivsusAegSekundites() {
-        return produktiivsusAegSekundites;
+    public Duration getProduktiivneAeg() {
+        return produktiivneAeg;
     }
 
-    public LocalTime getPuhkeAegSekundites() {
-        return puhkeAegSekundites;
+    public Duration getPuhkeAeg() {
+        return puhkeAeg;
     }
 
+    public int getUlesandeID() {
+        return ulesandeID;
+    }
+
+    public void setPomodoroID(int pomodoroID) {
+        this.pomodoroID = pomodoroID;
+    }
+
+    // Testimiseks
+    @Override
     public String toString() {
-        return "Pomodoro taimer produktiivsusajaga " + produktiivsusAegSekundites + " ja puhkeajaga " + puhkeAegSekundites;
+        return "Pomodoro{" +
+                "pomodoroID=" + pomodoroID +
+                ", produktiivneAeg=" + produktiivneAeg +
+                ", puhkeAeg=" + puhkeAeg +
+                ", kordused=" + kordused +
+                ", produktiivsusAegKokku=" + produktiivsusAegKokku +
+                '}';
     }
 }

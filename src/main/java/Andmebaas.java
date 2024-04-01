@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class Andmebaas {
+public class Andmebaas implements AutoCloseable {
     private final String nimi;
 
     private Connection andmebaas;
@@ -27,7 +27,7 @@ public class Andmebaas {
     }
 
     public Andmebaas() {
-        this("postgres", "parool", "pomodoro");
+        this("postgres", "sql", "pomodoro");
     }
 
     public Connection looUhendus(String kasutaja, String parool, String nimi) {
@@ -181,6 +181,12 @@ public class Andmebaas {
         return kasutajaID;
     }
 
+    public int lisaUusKasutaja(Kasutaja kasutaja) {
+        int kasutajaID = lisaUusKasutaja(kasutaja.getNimi());
+        kasutaja.setKasutajaID(kasutajaID);
+        return kasutajaID;
+    }
+
     public int lisaUusUlesanne(String ulesandeNimi, int kasutajaID) {
         final String lisaUusUlesanne = "INSERT INTO ulesanded (ulesanne_nimi, kasutaja_id) VALUES (?, ?)";
         int ulesandeID = -1;  // Näitab ülesande loomise ebaõnnestumist
@@ -195,6 +201,12 @@ public class Andmebaas {
             System.out.println("Ülesande olemi loomisel tekkis viga: " + viga.getMessage());
         }
 
+        return ulesandeID;
+    }
+
+    public int lisaUusUlesanne(Ulesanne ulesanne) {
+        int ulesandeID = lisaUusUlesanne(ulesanne.getNimi(), ulesanne.getKasutajaID());
+        ulesanne.setUlesandeID(ulesandeID);
         return ulesandeID;
     }
 
@@ -217,12 +229,25 @@ public class Andmebaas {
         return pomodoroID;
     }
 
-    private PGInterval aegPostgreFromaadis(Duration aeg) {
-        long sekundidKokku = Math.abs(aeg.getSeconds());
-        int tunnid =  (int) (sekundidKokku / 3600);
-        int minutid = (int) ((sekundidKokku % 3600) / 60);
-        double sekundid = (double) (sekundidKokku % 60);
-        return new PGInterval(0, 0, 0, tunnid, minutid, sekundid);
+    public int lisaUusPomodoro(Pomodoro pomodoro) {
+        int pomodoroID = lisaUusPomodoro(pomodoro.getProduktiivneAeg(), pomodoro.getPuhkeAeg(),
+                pomodoro.getUlesandeID());
+        pomodoro.setPomodoroID(pomodoroID);
+        return pomodoroID;
+    }
+
+    private static PGInterval aegPostgreFromaadis(Duration aeg) {
+        long sekundid = aeg.getSeconds();
+
+        int tunnid = (int) (sekundid / 3600);
+        sekundid %= 3600;
+
+        int minutid = (int) (sekundid / 60);
+        sekundid %= 60;
+
+
+        PGInterval pgIntervall = new PGInterval(0, 0, 0, tunnid, minutid, sekundid);
+        return pgIntervall;
     }
 
     public int kontrolliLisatudOlemit(PreparedStatement uueOlemiLause, String olemiTuup) throws SQLException {
@@ -250,12 +275,15 @@ public class Andmebaas {
 
     public ArrayList<Kasutaja> tagastaKasutajateOlemid() {
         ArrayList<Kasutaja> kasutajad = new ArrayList<Kasutaja>();
-        final String tagastaKasutajateOlemid = "SELECT nimi, kasutaja_id FROM kasutajad";
+        final String tagastaKasutajateOlemid = "SELECT kasutaja_id, nimi FROM kasutajad";
 
         try (PreparedStatement tagastaKasutajateOlemidLause = andmebaas.prepareStatement(tagastaKasutajateOlemid)) {
             try (ResultSet tagastaOlemidLauseTulem = tagastaKasutajateOlemidLause.executeQuery()) {
                 while (tagastaOlemidLauseTulem.next()) {
-                    kasutajad.add(new Kasutaja(tagastaOlemidLauseTulem.getString("nimi"), Integer.parseInt(tagastaOlemidLauseTulem.getString("kasutaja_id"))));
+                    int kasutajaID = tagastaOlemidLauseTulem.getInt("kasutaja_id");
+                    String kasutajaNimi = tagastaOlemidLauseTulem.getString("nimi");
+
+                    kasutajad.add(new Kasutaja(kasutajaID, kasutajaNimi));
                 }
             } catch (SQLException viga) {
                 System.out.println("Kasutajate olemite tagastamisel tekkis viga: " + viga.getMessage());
@@ -267,16 +295,25 @@ public class Andmebaas {
         return kasutajad;
     }
 
-    public ArrayList<Ulesanne> tagastaUlesanneteOlemid(int kasutajaID) throws SQLException {
-        ArrayList<Ulesanne> ulesanded = new ArrayList<>();
-        final String tagastaUlesanneteOlemid = "Select ulesanne_nimi, ulesanne_id from ulesanded WHERE kasutaja_id = " + kasutajaID;
+    public ArrayList<Ulesanne> tagastaUlesanneteOlemid(int kasutajaID){
+        ArrayList<Ulesanne> ulesanded = new ArrayList<Ulesanne>();
+        final String tagastaUlesanneteOlemid = "Select ulesanne_id, ulesanne_nimi from ulesanded WHERE kasutaja_id = ?";
 
         try (PreparedStatement tagastaUlesanneteOlemidLause = andmebaas.prepareStatement(tagastaUlesanneteOlemid)) {
+            tagastaUlesanneteOlemidLause.setInt(1, kasutajaID);
+
             try (ResultSet tagastaOlemidLauseTulem = tagastaUlesanneteOlemidLause.executeQuery()) {
                 while (tagastaOlemidLauseTulem.next()) {
-                    ulesanded.add(new Ulesanne(tagastaOlemidLauseTulem.getString("ulesanne_nimi"), Integer.parseInt(tagastaOlemidLauseTulem.getString("ulesanne_id"))));
+                    int ulesandeID = tagastaOlemidLauseTulem.getInt("ulesanne_id");
+                    String ulesandeNimi = tagastaOlemidLauseTulem.getString("ulesanne_nimi");
+
+                    ulesanded.add(new Ulesanne(ulesandeID, ulesandeNimi, kasutajaID));
                 }
+            } catch (SQLException viga) {
+                System.out.println("Ülesannete olemite tagastamisel tekkis viga: " + viga.getMessage());
             }
+        } catch (SQLException viga) {
+            System.out.println("Ülesannete olemite tagastamise lause käitamisel tekkis viga: " + viga.getMessage());
         }
 
         return ulesanded;
@@ -284,19 +321,61 @@ public class Andmebaas {
 
     public ArrayList<Pomodoro> tagastaPomodorodeOlemid(int ulesanneID) {
         ArrayList<Pomodoro> pomodorod = new ArrayList<>();
-        final String tagastaPomodorodeOlemid = "Select produktiivne_aeg, puhke_aeg from pomodorod WHERE ulesanne_ID = " + ulesanneID;
+        final String tagastaPomodorodeOlemid = "Select pomodoro_id, produktiivne_aeg, puhke_aeg, kordused, " +
+                "produktiivne_aeg_kokku from pomodorod WHERE ulesanne_ID = ?";
 
         try (PreparedStatement tagastaPomodorodeOlemidLause = andmebaas.prepareStatement(tagastaPomodorodeOlemid)) {
+            tagastaPomodorodeOlemidLause.setInt(1, ulesanneID);
+
             try (ResultSet tagastaOlemidLauseTulem = tagastaPomodorodeOlemidLause.executeQuery()) {
                 while (tagastaOlemidLauseTulem.next()) {
-                    pomodorod.add(new Pomodoro(Integer.parseInt(tagastaOlemidLauseTulem.getString("produktiivne_aeg")), Integer.parseInt(tagastaOlemidLauseTulem.getString("puhke_aeg")), false));
+                    int pomodoroID = tagastaOlemidLauseTulem.getInt("pomodoro_id");
+
+                    String produktiivneAegString = tagastaOlemidLauseTulem.getString("produktiivne_aeg");
+                    Duration produktiivneAeg  = postgreFormaadiTeisendus(produktiivneAegString);
+
+                    String puhkeAegString = tagastaOlemidLauseTulem.getString("puhke_aeg");
+                    Duration puhkeAeg = postgreFormaadiTeisendus(puhkeAegString);
+
+                    int kordused = tagastaOlemidLauseTulem.getInt("kordused");
+
+                    String produktiivneAegKokkuString =
+                            tagastaOlemidLauseTulem.getString("produktiivne_aeg_kokku");
+                    Duration produktiivneAegKokku = postgreFormaadiTeisendus(produktiivneAegKokkuString);
+
+                    pomodorod.add(new Pomodoro(pomodoroID, produktiivneAeg, puhkeAeg, kordused, produktiivneAegKokku,
+                            ulesanneID));
                 }
+            } catch (SQLException viga) {
+                System.out.println("Pomodorode olemite tagastamisel tekkis viga: " + viga.getMessage());
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException viga) {
+            System.out.println("Pomodorode olemite tagastamise lause käitamisel tekkis viga: " + viga.getMessage());
         }
 
         return pomodorod;
     }
 
+    private static Duration postgreFormaadiTeisendus(String pgIntervall) {
+        if (pgIntervall == null) return null;
+        // formaat [...] HH:MM:SS
+        String[] andmed = pgIntervall.split(" ");
+        if (andmed.length != 1) {
+            System.out.println("Viga postgre formaadist teisendusel, programmiga jätkamine võimalik");
+        }
+
+        pgIntervall = andmed[andmed.length - 1];  // Vaja ainult kõige viimast osa (tglt peakski ainult üks osa olema)
+        String[] ajaosad = pgIntervall.split(":");
+        int tunnid = Integer.parseInt(ajaosad[0]);
+        int minutid = Integer.parseInt(ajaosad[1]);
+        int sekundid = Integer.parseInt(ajaosad[2]);
+        long sekundidKokku = (long) tunnid * 3600 + (long) minutid * 60 + (long) sekundid;
+
+        return Duration.ofSeconds(sekundidKokku);
+    }
+
+    @Override
+    public void close() {
+        katkestaUhendus();
+    }
 }
