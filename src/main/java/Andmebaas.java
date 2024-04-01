@@ -7,7 +7,6 @@ import org.postgresql.util.PGInterval;
 
 import java.sql.*;
 import java.time.Duration;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Andmebaas implements AutoCloseable {
@@ -181,10 +180,11 @@ public class Andmebaas implements AutoCloseable {
         return kasutajaID;
     }
 
-    public int lisaUusKasutaja(Kasutaja kasutaja) {
-        int kasutajaID = lisaUusKasutaja(kasutaja.getNimi());
-        kasutaja.setKasutajaID(kasutajaID);
-        return kasutajaID;
+    public Kasutaja looUusKasutaja(String kasutajaNimi) {
+        int kasutajaID = lisaUusKasutaja(kasutajaNimi);
+        if (kasutajaID == -1) return null;
+
+        return new Kasutaja(kasutajaID, kasutajaNimi);
     }
 
     public int lisaUusUlesanne(String ulesandeNimi, int kasutajaID) {
@@ -204,10 +204,13 @@ public class Andmebaas implements AutoCloseable {
         return ulesandeID;
     }
 
-    public int lisaUusUlesanne(Ulesanne ulesanne) {
-        int ulesandeID = lisaUusUlesanne(ulesanne.getNimi(), ulesanne.getKasutajaID());
-        ulesanne.setUlesandeID(ulesandeID);
-        return ulesandeID;
+    public Ulesanne looUusUlesanne(String ulesandeNimi, Kasutaja ulesandeOmanik) {
+        int ulesandeID = lisaUusUlesanne(ulesandeNimi, ulesandeOmanik.getKasutajaID());
+        if (ulesandeID == -1) return null;
+
+        Ulesanne ulesanne = new Ulesanne(ulesandeID, ulesandeNimi);
+        ulesandeOmanik.lisaUlesanneNimekirja(ulesanne);
+        return ulesanne;
     }
 
     public int lisaUusPomodoro(Duration produktiivneAeg, Duration puhkeAeg, int ulesanneID) {
@@ -229,11 +232,13 @@ public class Andmebaas implements AutoCloseable {
         return pomodoroID;
     }
 
-    public int lisaUusPomodoro(Pomodoro pomodoro) {
-        int pomodoroID = lisaUusPomodoro(pomodoro.getProduktiivneAeg(), pomodoro.getPuhkeAeg(),
-                pomodoro.getUlesandeID());
-        pomodoro.setPomodoroID(pomodoroID);
-        return pomodoroID;
+    public Pomodoro looUusPomodoro(Duration produktiivneAeg, Duration puhkeAeg, Ulesanne kuulubUlesandesse) {
+        int pomodoroID = lisaUusPomodoro(produktiivneAeg, puhkeAeg, kuulubUlesandesse.getUlesandeID());
+        if (pomodoroID == -1) return null;
+
+        Pomodoro pomodoro = new Pomodoro(pomodoroID, produktiivneAeg, puhkeAeg);
+        kuulubUlesandesse.lisaPomodoro(pomodoro);
+        return pomodoro;
     }
 
     private static PGInterval aegPostgreFromaadis(Duration aeg) {
@@ -307,7 +312,7 @@ public class Andmebaas implements AutoCloseable {
                     int ulesandeID = tagastaOlemidLauseTulem.getInt("ulesanne_id");
                     String ulesandeNimi = tagastaOlemidLauseTulem.getString("ulesanne_nimi");
 
-                    ulesanded.add(new Ulesanne(ulesandeID, ulesandeNimi, kasutajaID));
+                    ulesanded.add(new Ulesanne(ulesandeID, ulesandeNimi));
                 }
             } catch (SQLException viga) {
                 System.out.println("Ülesannete olemite tagastamisel tekkis viga: " + viga.getMessage());
@@ -343,8 +348,7 @@ public class Andmebaas implements AutoCloseable {
                             tagastaOlemidLauseTulem.getString("produktiivne_aeg_kokku");
                     Duration produktiivneAegKokku = postgreFormaadiTeisendus(produktiivneAegKokkuString);
 
-                    pomodorod.add(new Pomodoro(pomodoroID, produktiivneAeg, puhkeAeg, kordused, produktiivneAegKokku,
-                            ulesanneID));
+                    pomodorod.add(new Pomodoro(pomodoroID, produktiivneAeg, puhkeAeg, kordused, produktiivneAegKokku));
                 }
             } catch (SQLException viga) {
                 System.out.println("Pomodorode olemite tagastamisel tekkis viga: " + viga.getMessage());

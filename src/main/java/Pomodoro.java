@@ -7,41 +7,21 @@ public class Pomodoro {
 
     private int kordused;
     private Duration produktiivsusAegKokku;
-    private int ulesandeID;
 
     public Pomodoro(int pomodoroID, Duration produktiivneAeg, Duration puhkeAeg, int kordused,
-                    Duration produktiivsusAegKokku, int ulesandeID) {
+                    Duration produktiivsusAegKokku) {
         this.pomodoroID = pomodoroID;
         this.produktiivneAeg = produktiivneAeg;
         this.puhkeAeg = puhkeAeg;
         this.kordused = kordused;
         this.produktiivsusAegKokku = produktiivsusAegKokku;
-        this.ulesandeID = ulesandeID;
     }
 
-    public Pomodoro(Duration produktiivneAeg, Duration puhkeAeg, int kordused, Duration produktiivsusAegKokku,
-                    int ulesandeID) {
+    public Pomodoro(int pomodoroID, Duration produktiivneAeg, Duration puhkeAeg) {
+        this.pomodoroID = pomodoroID;
         this.produktiivneAeg = produktiivneAeg;
         this.puhkeAeg = puhkeAeg;
-        this.kordused = kordused;
-        this.produktiivsusAegKokku = produktiivsusAegKokku;
-        this.ulesandeID = ulesandeID;
-    }
-
-    public Duration getProduktiivneAeg() {
-        return produktiivneAeg;
-    }
-
-    public Duration getPuhkeAeg() {
-        return puhkeAeg;
-    }
-
-    public int getUlesandeID() {
-        return ulesandeID;
-    }
-
-    public void setPomodoroID(int pomodoroID) {
-        this.pomodoroID = pomodoroID;
+        kordused = 0;
     }
 
     // Testimiseks

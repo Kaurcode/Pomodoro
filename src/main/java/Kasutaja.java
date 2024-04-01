@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.ArrayList;
 
 public class Kasutaja {
@@ -21,15 +20,11 @@ public class Kasutaja {
         return kasutajaID;
     }
 
-    public void setKasutajaID(int kasutajaID) {
-        this.kasutajaID = kasutajaID;
-    }
-
     public String getNimi() {
         return nimi;
     }
 
-    public void lisaUlesanne(Ulesanne ulesanne) {
+    public void lisaUlesanneNimekirja(Ulesanne ulesanne) {
         ulesanded.add(ulesanne);
     }
 
