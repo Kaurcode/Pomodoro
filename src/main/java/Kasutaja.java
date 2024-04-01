@@ -27,6 +27,9 @@ public class Kasutaja {
     public void lisaUlesanneNimekirja(Ulesanne ulesanne) {
         ulesanded.add(ulesanne);
     }
+    public void lisaUlesandedNimekirja(ArrayList<Ulesanne> ulesanded) {
+        this.ulesanded.addAll(ulesanded);
+    }
 
     @Override
     public String toString() {

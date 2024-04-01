@@ -23,6 +23,10 @@ public class Ulesanne {
         pomodorod.add(pomodoro);
     }
 
+    public void lisaPomodorodNimekirja(ArrayList<Pomodoro> pomodorod) {
+        this.pomodorod.addAll(pomodorod);
+    }
+
     @Override
     public String toString() {
         return nimi;
