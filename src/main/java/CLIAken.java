@@ -1,49 +1,80 @@
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CLIAken {
-    public static int[] CLIAknaSuurus(String sonum) {
-        StringBuilder valjund = new StringBuilder();
-        valjund.append(EscKoodid.muudaKursoriAsukohta(0, 0));
-        valjund.append(EscKoodid.kustutaValjundAlatesKursorist());
-        valjund.append(EscKoodid.muudaKursoriAsukohta(5000, 5000));
-        valjund.append(EscKoodid.tagastaKursoriAsukoht());
-        valjund.append(String.format(" %s - ", sonum));
+    private final String NURK_1 = "┌";
+    private final String NURK_2 = "┐";
+    private final String NURK_3 = "└";
+    private final String NURK_4 = "┘";
 
-        String koordinaadid;
-        try (Scanner luger = new Scanner(System.in)) {
-            System.out.print(valjund);
-            System.out.flush();
+    private final String HORISONTAALNE_RIBA = "─";
+    private final String VERTIKAALNE_RIBA = "│";
 
-            koordinaadid = luger.next();
-        }
+    private String aknaPealkiri;
 
-        valjund.delete(0, valjund.length());
-        valjund.append(EscKoodid.muudaKursoriAsukohta(0, 0));
-        valjund.append(EscKoodid.kustutaValjundAlatesKursorist());
-        System.out.print(valjund);
-        System.out.flush();
+    private CLIElement[] CLIElemendid;
 
-        return teisendaKoordinaatideks(koordinaadid);
+    private int laius;
+    private int pikkus;
+
+    private int xKoordinaat;
+    private int yKoordinaat;
+
+    private String piirjooneVarv;
+    private String aknaTaust;
+
+    public CLIAken(String aknaPealkiri, CLIElement[] CLIElemendid, String piirjooneVarv, String aknaTaust, int minLaius,
+                   int minPikkus) {
+
+        this.aknaPealkiri = aknaPealkiri;
+        this.CLIElemendid = CLIElemendid;
+
+        this.piirjooneVarv = piirjooneVarv;
+        this.aknaTaust = aknaTaust;
+
+        this.laius = minLaius;
+        this.pikkus = minPikkus;
+
+        xKoordinaat = (KonsooliFunktsioonid.getKonsooliLaius() - this.laius) / 2;
+        yKoordinaat = (KonsooliFunktsioonid.getKonsooliPikkus() - this.pikkus) / 2;
     }
 
-    public static int[] teisendaKoordinaatideks(String sisend) {
-        int[] koordinaadid = {-1, -1};
+    public String looCLIAken() {
+        String horisontaalneLairiba = HORISONTAALNE_RIBA.repeat(laius - 2);
+        String vertikaalsedLairibad = VERTIKAALNE_RIBA + " ".repeat(laius - 2) + VERTIKAALNE_RIBA;
 
-        String koordinaatideFormaatString = "\033\\[(\\d+);(\\d+)R";
-        Pattern koordinaatideFormaat = Pattern.compile(koordinaatideFormaatString);
-        Matcher formaadiKontroll = koordinaatideFormaat.matcher(sisend);
+        StringBuilder aken = new StringBuilder();
+        aken.append(EscKoodid.peidaKursor());
+        aken.append(piirjooneVarv);
+        aken.append(aknaTaust);
 
-        if (formaadiKontroll.find()) {
-            int rida = Integer.parseInt(formaadiKontroll.group(1));
-            int veerg = Integer.parseInt(formaadiKontroll.group(2));
-            koordinaadid[0] = rida;
-            koordinaadid[1] = veerg;
-        } else {
-            System.out.println("Viga koordinaatide leidmisel");
+        int pealkirjaPikkus = aknaPealkiri.length();
+
+        aken.append(EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat))
+                .append(NURK_1)
+                .append(HORISONTAALNE_RIBA)
+                .append(aknaPealkiri)
+                .append(HORISONTAALNE_RIBA.repeat(laius - 3 - pealkirjaPikkus))
+                .append(NURK_2);
+
+        for (int y = yKoordinaat + 1; y <= yKoordinaat + pikkus - 1; y++) {
+            aken.append(EscKoodid.muudaKursoriAsukohta(y, xKoordinaat))
+                    .append(vertikaalsedLairibad);
         }
 
-        return koordinaadid;
+        aken.append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + pikkus, xKoordinaat))
+                .append(NURK_3)
+                .append(horisontaalneLairiba)
+                .append(NURK_4);
+
+        for (int elemendiIndeks = 0; elemendiIndeks < CLIElemendid.length; elemendiIndeks++) {
+            aken.append(CLIElemendid[elemendiIndeks]
+                    .looCLIElement(xKoordinaat + 5, yKoordinaat + 2 + elemendiIndeks,
+                            piirjooneVarv, aknaTaust));
+        }
+
+        aken.append(EscKoodid.tavalineTekst());
+        aken.append(EscKoodid.tavalineTaust());
+        aken.append(EscKoodid.naitaKursor());
+
+        return aken.toString();
     }
 }

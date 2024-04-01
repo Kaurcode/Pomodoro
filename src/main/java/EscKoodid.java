@@ -8,8 +8,23 @@ public class EscKoodid {
         return String.format("\033[48;2;%d;%d;%dm%s", r, g, b, tekst);
     }
 
+    public static String hallTaust() {
+        return "\033[100m";
+    }
+
+    public static String mustTaust() {
+        return "\033[40m";
+    }
+
     public static String heleRohelineTekst() {
         return "\033[92m";
+    }
+    public static String heleLillaTekst() {
+        return "\033[95m";
+    }
+
+    public static String lillaTekst() {
+        return "\033[35m";
     }
 
     /**
@@ -17,6 +32,12 @@ public class EscKoodid {
      */
     public static String tagastaTavaline() {
         return "\033[0m";
+    }
+    public static String tavalineTekst() {
+        return "\033[39m";
+    }
+    public static String tavalineTaust() {
+        return "\033[49m";
     }
 
     public static String peidaKursor() {
@@ -35,8 +56,8 @@ public class EscKoodid {
         return "\033[u";
     }
 
-    public static String muudaKursoriAsukohta(int xKoordinaat, int yKoordinaat) {
-        return String.format("\033[%d;%dH", xKoordinaat, yKoordinaat);
+    public static String muudaKursoriAsukohta(int yKoordinaat, int xKoordinaat) {
+        return String.format("\033[%d;%dH", yKoordinaat, xKoordinaat);
     }
 
     public static String tagastaKursoriAsukoht() {
