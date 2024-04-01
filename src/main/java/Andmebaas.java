@@ -56,7 +56,9 @@ public class Andmebaas implements AutoCloseable {
     public boolean kontrolliAndmebaas() {
         boolean tagastus = false;
 
-        final String kontrolliDB = "SELECT 1 FROM pg_database WHERE datname= ?";
+        final String kontrolliDB =
+                "SELECT 1 FROM pg_database " +
+                "WHERE datname= ?";
         try (PreparedStatement kontrolliDBLause = andmebaas.prepareStatement(kontrolliDB)) {
             kontrolliDBLause.setString(1, nimi);
             try (ResultSet kasDBOlemas = kontrolliDBLause.executeQuery()) {
@@ -90,7 +92,8 @@ public class Andmebaas implements AutoCloseable {
             System.out.printf("%s olem juba olemas\n", tabeliNimi);
             return;
         }
-        final String looKasutajadOlem = "CREATE TABLE " + tabeliNimi + " (" +
+        final String looKasutajadOlem =
+                "CREATE TABLE " + tabeliNimi + " (" +
                 "kasutaja_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
                 "nimi VARCHAR(100) NOT NULL UNIQUE" +
                 ");";
@@ -111,7 +114,8 @@ public class Andmebaas implements AutoCloseable {
             return;
         }
 
-        final String looUlesandedOlem = "CREATE TABLE " + tabeliNimi + " (" +
+        final String looUlesandedOlem =
+                "CREATE TABLE " + tabeliNimi + " (" +
                 "ulesanne_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
                 "ulesanne_nimi VARCHAR(100) NOT NULL," +
                 "kasutaja_id INT NOT NULL," +
@@ -135,7 +139,8 @@ public class Andmebaas implements AutoCloseable {
             return;
         }
 
-        final String looPomodorodOlem = "CREATE TABLE " + tabeliNimi + " (" +
+        final String looPomodorodOlem =
+                "CREATE TABLE " + tabeliNimi + " (" +
                 "pomodoro_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
                 "produktiivne_aeg INTERVAL NOT NULL," +
                 "puhke_aeg INTERVAL NOT NULL," +
@@ -167,7 +172,9 @@ public class Andmebaas implements AutoCloseable {
     }
 
     public int lisaUusKasutaja(String kasutajaNimi) {
-        final String lisaUusKasutaja = "INSERT INTO kasutajad (nimi) VALUES (?)";
+        final String lisaUusKasutaja =
+                "INSERT INTO kasutajad (nimi) " +
+                "VALUES (?)";
         int kasutajaID = -1;  // Näitab kasutaja loomise ebaõnnestumist
 
         try (PreparedStatement lisaUusKasutajaLause =
@@ -189,7 +196,9 @@ public class Andmebaas implements AutoCloseable {
     }
 
     public int lisaUusUlesanne(String ulesandeNimi, int kasutajaID) {
-        final String lisaUusUlesanne = "INSERT INTO ulesanded (ulesanne_nimi, kasutaja_id) VALUES (?, ?)";
+        final String lisaUusUlesanne =
+                "INSERT INTO ulesanded (ulesanne_nimi, kasutaja_id) " +
+                "VALUES (?, ?)";
         int ulesandeID = -1;  // Näitab ülesande loomise ebaõnnestumist
 
         try (PreparedStatement lisaUusUlesanneLause =
@@ -215,7 +224,8 @@ public class Andmebaas implements AutoCloseable {
     }
 
     public int lisaUusPomodoro(Duration produktiivneAeg, Duration puhkeAeg, int ulesanneID) {
-        final String lisaUusPomodoro = "INSERT INTO pomodorod (produktiivne_aeg, puhke_aeg, ulesanne_id) " +
+        final String lisaUusPomodoro =
+                "INSERT INTO pomodorod (produktiivne_aeg, puhke_aeg, ulesanne_id) " +
                 "VALUES (?, ?, ?)";
         int pomodoroID = -1;
 
@@ -281,7 +291,9 @@ public class Andmebaas implements AutoCloseable {
 
     public ArrayList<Kasutaja> tagastaKasutajateOlemid() {
         ArrayList<Kasutaja> kasutajad = new ArrayList<Kasutaja>();
-        final String tagastaKasutajateOlemid = "SELECT kasutaja_id, nimi FROM kasutajad";
+        final String tagastaKasutajateOlemid =
+                "SELECT kasutaja_id, nimi " +
+                "FROM kasutajad";
 
         try (PreparedStatement tagastaKasutajateOlemidLause = andmebaas.prepareStatement(tagastaKasutajateOlemid)) {
             try (ResultSet tagastaOlemidLauseTulem = tagastaKasutajateOlemidLause.executeQuery()) {
@@ -303,7 +315,10 @@ public class Andmebaas implements AutoCloseable {
 
     public ArrayList<Ulesanne> tagastaUlesanneteOlemid(int kasutajaID){
         ArrayList<Ulesanne> ulesanded = new ArrayList<Ulesanne>();
-        final String tagastaUlesanneteOlemid = "Select ulesanne_id, ulesanne_nimi from ulesanded WHERE kasutaja_id = ?";
+        final String tagastaUlesanneteOlemid =
+                "SELECT ulesanne_id, ulesanne_nimi " +
+                "FROM ulesanded " +
+                "WHERE kasutaja_id = ?";
 
         try (PreparedStatement tagastaUlesanneteOlemidLause = andmebaas.prepareStatement(tagastaUlesanneteOlemid)) {
             tagastaUlesanneteOlemidLause.setInt(1, kasutajaID);
@@ -327,8 +342,11 @@ public class Andmebaas implements AutoCloseable {
 
     public ArrayList<Pomodoro> tagastaPomodorodeOlemid(int ulesanneID) {
         ArrayList<Pomodoro> pomodorod = new ArrayList<>();
-        final String tagastaPomodorodeOlemid = "Select pomodoro_id, produktiivne_aeg, puhke_aeg, kordused, " +
-                "produktiivne_aeg_kokku, sisestuse_aeg from pomodorod WHERE ulesanne_ID = ?";
+        final String tagastaPomodorodeOlemid =
+                "SELECT pomodoro_id, produktiivne_aeg, puhke_aeg, kordused, " +
+                "produktiivne_aeg_kokku, sisestuse_aeg " +
+                "FROM pomodorod " +
+                "WHERE ulesanne_ID = ? ";
 
         try (PreparedStatement tagastaPomodorodeOlemidLause = andmebaas.prepareStatement(tagastaPomodorodeOlemid)) {
             tagastaPomodorodeOlemidLause.setInt(1, ulesanneID);

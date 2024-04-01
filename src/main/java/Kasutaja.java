@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Kasutaja {
+public class Kasutaja implements Comparable<Kasutaja> {
     private int kasutajaID;
     private String nimi;
     private ArrayList<Ulesanne> ulesanded;
@@ -34,5 +34,10 @@ public class Kasutaja {
     @Override
     public String toString() {
         return nimi;
+    }
+
+    @Override
+    public int compareTo(Kasutaja vorreldavKasutaja) {
+        return this.getNimi().compareTo(vorreldavKasutaja.getNimi());
     }
 }

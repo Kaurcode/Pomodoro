@@ -1,7 +1,7 @@
 import java.sql.Timestamp;
 import java.time.Duration;
 
-public class Pomodoro {
+public class Pomodoro implements Comparable<Pomodoro> {
     private int pomodoroID;
     private Duration produktiivneAeg;
     private Duration puhkeAeg;
@@ -27,6 +27,10 @@ public class Pomodoro {
         this.kordused = 0;
     }
 
+    public Timestamp getSisestusAeg() {
+        return sisestusAeg;
+    }
+
     // Testimiseks
 
     @Override
@@ -39,5 +43,10 @@ public class Pomodoro {
                 ", produktiivsusAegKokku=" + produktiivsusAegKokku +
                 ", sisestusAeg=" + sisestusAeg +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Pomodoro vorreldavPomodoro) {
+        return vorreldavPomodoro.getSisestusAeg().compareTo(this.getSisestusAeg());
     }
 }
