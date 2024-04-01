@@ -24,7 +24,7 @@ public class Pomodoro implements Comparable<Pomodoro> {
         this.pomodoroID = pomodoroID;
         this.produktiivneAeg = produktiivneAeg;
         this.puhkeAeg = puhkeAeg;
-        this.kordused = 0;
+        kordused = 0;
     }
 
     public Timestamp getSisestusAeg() {
@@ -32,17 +32,9 @@ public class Pomodoro implements Comparable<Pomodoro> {
     }
 
     // Testimiseks
-
     @Override
     public String toString() {
-        return "Pomodoro{" +
-                "pomodoroID=" + pomodoroID +
-                ", produktiivneAeg=" + produktiivneAeg +
-                ", puhkeAeg=" + puhkeAeg +
-                ", kordused=" + kordused +
-                ", produktiivsusAegKokku=" + produktiivsusAegKokku +
-                ", sisestusAeg=" + sisestusAeg +
-                '}';
+        return "Pomodoro produktiivsusajaga " + produktiivneAeg + " ja puhkeajaga " + puhkeAeg;
     }
 
     @Override
