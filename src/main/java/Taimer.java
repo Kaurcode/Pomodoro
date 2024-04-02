@@ -3,10 +3,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Taimer {
-    long aegMs;
-    long loendus;
-    Timer taimer;
-    TimerTask loendaja;
+    private long aegMs;
+    private long loendus;
+    private Timer taimer;
+    private TimerTask loendaja;
+    private float protsent;
 
     public Taimer(Duration aeg) {
         this.aegMs = aeg.toMillis();
@@ -20,15 +21,21 @@ public class Taimer {
             @Override
             public void run() {
                 loendus -= 10;
+                protsent = 100 - Math.max(0, 100 * ((float) loendus / aegMs));
             }
         };
     }
 
-    public Duration alustaLoendust() {
+    public void alustaLoendust() {
         taimer.scheduleAtFixedRate(loendaja, 0, 10);
+    }
 
-        // Kood taimeri lõpetamiseks (kasutaja sisend)
-
+    public Duration lopetaLoendus() {
+        taimer.cancel();
         return Duration.ofMillis(this.loendus * -1 + this.aegMs);
+    }
+
+    public float getProtsent() {
+        return protsent;
     }
 }

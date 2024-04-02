@@ -1,9 +1,20 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Scanner;
-
 public class EscKoodid {
+    public static String allaJoonitud() {
+        return "\033[4m";
+    }
+
+    public static String mitteAllaJoonitud() {
+        return "\033[24m";
+    }
+
+    public static String kursiiv() {
+        return "\033[3m";
+    }
+
+    public static String mitteKursiiv() {
+        return "\033[23m";
+    }
+
     public static String tagastaRGBTaust(String tekst, int r, int g, int b) {
         return String.format("\033[48;2;%d;%d;%dm%s", r, g, b, tekst);
     }
@@ -16,11 +27,15 @@ public class EscKoodid {
         return "\033[40m";
     }
 
+    public static String heleTsuaanTekst() { return "\033[96m"; };
     public static String heleRohelineTekst() {
         return "\033[92m";
     }
     public static String heleLillaTekst() {
         return "\033[95m";
+    }
+    public static String heleKollaneTekst() {
+        return "\033[93m";
     }
 
     public static String lillaTekst() {

@@ -1,8 +1,6 @@
 import java.util.Arrays;
 public class CLIElemendid {
-    public static int[] punane = new int[1530];
-    public static int[] roheline = new int[1530];
-    public static int[] sinine = new int[1530];
+
     public static StringBuilder edenemisRiba(float protsent, int laius, int pikkus, int iteratsioon, int samm) {
         StringBuilder edenemisRiba = new StringBuilder();
         int ribaKaugus = Math.min(laius, Math.round(protsent * laius / 100));
@@ -45,45 +43,6 @@ public class CLIElemendid {
 
     public static StringBuilder edenemisRiba(float protsent, int laius, int pikkus, int iteratsioon) {
         return edenemisRiba(protsent, laius, pikkus, iteratsioon, 1);
-    }
-
-    public static void looRGB() {
-        // 1. samm: Punane -> Kollane
-        for (int i = 0; i < 255; i++) {
-            punane[i] = 255;
-            roheline[i] = i;
-            sinine[i] = 0;
-        }
-        // 2. samm: Kollane -> Roheline
-        for (int i = 255; i < 510; i++) {
-            punane[i] = 255 - (i - 255);
-            roheline[i] = 255;
-            sinine[i] = 0;
-        }
-        // 3. samm: Roheline -> Tsüaan
-        for (int i = 510; i < 765; i++) {
-            punane[i] = 0;
-            roheline[i] = 255;
-            sinine[i] = i - 510;
-        }
-        // 4. samm: Tsüaan -> Sinine
-        for (int i = 765; i < 1020; i++) {
-            punane[i] = 0;
-            roheline[i] = 255 - (i - 765);
-            sinine[i] = 255;
-        }
-        // 5. samm: Sinine -> Purpurpunane
-        for (int i = 1020; i < 1275; i++) {
-            punane[i] = i - 1020;
-            roheline[i] = 0;
-            sinine[i] = 255;
-        }
-        // 6. samm: Purpurpunane -> Punane
-        for (int i = 1275; i < 1530; i++) {
-            punane[i] = 255;
-            roheline[i] = 0;
-            sinine[i] = 255 - (i - 1275);
-        }
     }
 
     public static void main(String[] args) {
