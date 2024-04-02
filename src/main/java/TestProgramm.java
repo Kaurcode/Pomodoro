@@ -3,5 +3,7 @@ public class TestProgramm {
         Andmebaas andmebaas = Programm.alustaProgramm();
         Pomodoro pomodoro = Programm.kasutajaValik(andmebaas);
         System.out.println(pomodoro);
+        //Pomodoro taimer
+        Lõpusõnad.lõpusõnad();
     }
 }
