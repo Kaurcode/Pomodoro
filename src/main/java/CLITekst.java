@@ -1,18 +1,34 @@
 public class CLITekst implements CLIAknaElement {
     private String tekst;
+    private int laius;
+    private boolean kasKursiiv;
+    private String tekstiVarv;
 
-    public CLITekst(String tekst) {
+    public CLITekst(String tekst, String tekstiVarv, Boolean kasKursiiv) {
         this.tekst = tekst;
+        this.laius = tekst.length();
+        this.kasKursiiv = kasKursiiv;
+        this.tekstiVarv = tekstiVarv;
     }
 
     @Override
-    public String looCLIElement(int xKoordinaat, int yKoordinaat, CLIAken aken) {
+    public String looCLIElement(int xKoordinaat, int yKoordinaat, int laius) {
+        this.laius = laius;
 
-        return CLITeema.TEKSTI_VARV +
-                EscKoodid.kursiiv() +
-                EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat) +
-                this.tekst +
-                EscKoodid.mitteKursiiv();
+        StringBuilder tekstiElement = new StringBuilder();
+
+        if (kasKursiiv) {
+            tekstiElement.append(EscKoodid.kursiiv());
+        }
+
+        tekstiElement.append(tekstiVarv)
+                .append(EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat));
+
+        if (kasKursiiv) {
+            tekstiElement.append(this.tekst).append(EscKoodid.mitteKursiiv());
+        }
+
+        return tekstiElement.toString();
     }
 
     @Override
@@ -23,5 +39,15 @@ public class CLITekst implements CLIAknaElement {
     @Override
     public String uuendaCLIElement() {
         return null;
+    }
+
+    @Override
+    public int valjastaElemendiLaius() {
+        return this.laius;
+    }
+
+    @Override
+    public boolean kasVajabUuendamist() {
+        return false;
     }
 }

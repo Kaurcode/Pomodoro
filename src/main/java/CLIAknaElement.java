@@ -1,6 +1,7 @@
 public interface CLIAknaElement {
-    public boolean vajabUuendamist = false;
-    public String looCLIElement(int xKoordinaat, int yKoordinaat, CLIAken cliAken);
+    public String looCLIElement(int xKoordinaat, int yKoordinaat, int laius);
     public String uuendaCLIElement();
     public int valjastaElemendiPikkus();
+    public int valjastaElemendiLaius();
+    public boolean kasVajabUuendamist();
 }

@@ -1,43 +1,43 @@
 public class CLIEdenemisRiba implements CLIAknaElement {
     int xKoordinaat;
     int yKoordinaat;
-    public boolean vajabUuendamist;
+    public boolean kasVajabUuendamist;
     private final static int HELEDA_AARE_PROTSENT = 50;
     private int heledaAarePikkus;
     private float protsent;
     private int ribaKaugus;
-    private int ribaLaius;
-    private int hetk;
+    private int laius;
+    private int animatsiooniJark;
     private int samm;
 
 
     public CLIEdenemisRiba(int samm, float protsent) {
         this.samm = samm;
         this.protsent = protsent;
-        this.hetk = 0;
+        this.animatsiooniJark = 0;
+        this.laius = 0;
+        kasVajabUuendamist = true;
     }
 
     @Override
-    public String looCLIElement(int xKoordinaat, int yKoordinaat, CLIAken cliAken) {
+    public String looCLIElement(int xKoordinaat, int yKoordinaat, int laius) {
         this.xKoordinaat = xKoordinaat;
         this.yKoordinaat = yKoordinaat;
+        this.laius = laius;
 
-        int laius = cliAken.getLaius() - 2 * CLIAken.XPUHVER;
-        ribaLaius = laius - 4;
-        heledaAarePikkus = Math.round(ribaLaius * (float) HELEDA_AARE_PROTSENT / 100);
-
-        ribaKaugus = Math.min(laius, Math.round(protsent * ribaLaius / 100));
+        heledaAarePikkus = Math.round(laius * (float) HELEDA_AARE_PROTSENT / 100);
+        ribaKaugus = Math.min(laius, Math.round(protsent * laius / 100));
 
         StringBuilder edenemisRiba = new StringBuilder();
 
-        edenemisRiba.append(EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat));
-        edenemisRiba.append(CLITeema.SISESTUSE_AKNA_VARV);
-        edenemisRiba.append(CLITeema.NURK_1 + CLITeema.HORISONTAALNE_RIBA.repeat(laius - 2) + CLITeema.NURK_2)
-                .append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + 1, xKoordinaat))
-                .append(CLITeema.VERTIKAALNE_RIBA + " ".repeat(laius - 2) + CLITeema.VERTIKAALNE_RIBA)
-                .append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + 2, xKoordinaat))
-                .append(CLITeema.NURK_3 + CLITeema.HORISONTAALNE_RIBA.repeat(laius - 2) + CLITeema.NURK_4)
-                .append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + 1, xKoordinaat + 1));
+//        edenemisRiba.append(EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat));
+//        edenemisRiba.append(CLITeema.SISESTUSE_AKNA_VARV);
+//        edenemisRiba.append(CLITeema.NURK_1 + CLITeema.HORISONTAALNE_RIBA.repeat(laius - 2) + CLITeema.NURK_2)
+//                .append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + 1, xKoordinaat))
+//                .append(CLITeema.VERTIKAALNE_RIBA + " ".repeat(laius - 2) + CLITeema.VERTIKAALNE_RIBA)
+//                .append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + 2, xKoordinaat))
+//                .append(CLITeema.NURK_3 + CLITeema.HORISONTAALNE_RIBA.repeat(laius - 2) + CLITeema.NURK_4)
+//                .append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + 1, xKoordinaat + 1));
 
         edenemisRiba.append(joonistaRiba());
 
@@ -46,9 +46,9 @@ public class CLIEdenemisRiba implements CLIAknaElement {
 
     public String joonistaRiba() {
         StringBuilder edenemisRiba = new StringBuilder();
-        int iteratsioon = hetk;
+        int iteratsioon = animatsiooniJark;
 
-        edenemisRiba.append(EscKoodid.muudaKursoriAsukohta(yKoordinaat + 1, xKoordinaat + 2));
+        edenemisRiba.append(EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat));
         for (int asukoht = 0; asukoht <= ribaKaugus - 1 - heledaAarePikkus; asukoht++) {
             while (iteratsioon < 0) {
                 iteratsioon += 1530;
@@ -83,27 +83,32 @@ public class CLIEdenemisRiba implements CLIAknaElement {
             iteratsioon += samm;
         }
         edenemisRiba.append(EscKoodid.tavalineTaust());
-        hetk += 1;
+        animatsiooniJark += 1;
         return edenemisRiba.toString();
     }
 
     @Override
     public String uuendaCLIElement() {
-        vajabUuendamist = false;
         return joonistaRiba();
     }
 
     @Override
     public int valjastaElemendiPikkus() {
-        return 4;
+        return 0;
     }
 
     public void setProtsent(float protsent) {
         this.protsent = protsent;
-        int uusRibaKaugus = Math.min(Math.round(protsent * ribaLaius / 100), ribaLaius);
+        ribaKaugus = Math.min(Math.round(protsent * laius / 100), laius);
+    }
 
-        if (uusRibaKaugus == ribaKaugus) return;
-        ribaKaugus = uusRibaKaugus;
-        vajabUuendamist = true;
+    @Override
+    public boolean kasVajabUuendamist() {
+        return kasVajabUuendamist;
+    }
+
+    @Override
+    public int valjastaElemendiLaius() {
+        return this.laius;
     }
 }
