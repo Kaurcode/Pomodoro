@@ -26,9 +26,16 @@ public class Andmebaas implements AutoCloseable {
     }
 
     public Andmebaas() {
-        this("postgres", "sql", "pomodoro");
+        this("postgres", "parool", "pomodoro");
     }
 
+    /**
+     * Meetod andmebaasiga ühendamiseks, et andmebaasist andmeid saada
+     * @param kasutaja Parameeter kasutaja andmebaasi kasutajanime jaoks, enamasti "postgres"
+     * @param parool Parameeter kasutaja andmebaasi parooli jaoks, enamasti "sql"
+     * @param nimi Parameeter andmebaasi nime jaoks, valisime "pomodoro"
+     * @return Tagastab ühenduse andmebaasiga
+     */
     public Connection looUhendus(String kasutaja, String parool, String nimi) {
         try {
             Class.forName("org.postgresql.Driver");
@@ -44,6 +51,9 @@ public class Andmebaas implements AutoCloseable {
         return null;
     }
 
+    /**
+     * Meetod andmebaasiga ühenduse lõpetamiseks, kasutusel koodi lõpus, kui andmebaasi enam vaja pole.
+     */
     public void katkestaUhendus() {
         try {
             andmebaas.close();
@@ -53,12 +63,16 @@ public class Andmebaas implements AutoCloseable {
         }
     }
 
+    /**
+     * Meetod andmebaasi olemasolu ning toimimise kontrollimiseks
+     * @return Töötava andmebaasi puhul tagastab "true"
+     */
     public boolean kontrolliAndmebaas() {
         boolean tagastus = false;
 
         final String kontrolliDB =
                 "SELECT 1 FROM pg_database " +
-                "WHERE datname= ?";
+                        "WHERE datname= ?";
         try (PreparedStatement kontrolliDBLause = andmebaas.prepareStatement(kontrolliDB)) {
             kontrolliDBLause.setString(1, nimi);
             try (ResultSet kasDBOlemas = kontrolliDBLause.executeQuery()) {
@@ -71,6 +85,9 @@ public class Andmebaas implements AutoCloseable {
         return tagastus;
     }
 
+    /**
+     * Kui andmebaas puudub, siis loob selle andmebaasi.
+     */
     public void looAndmebaas() {
         if (kontrolliAndmebaas()) {
             System.out.println("Andmebaas juba olemas!");
@@ -85,6 +102,9 @@ public class Andmebaas implements AutoCloseable {
         }
     }
 
+    /**
+     * Meetod andmebaasis kasutajate tabeli loomiseks, kasutusel kui andmebaas puudub.
+     */
     public void looKasutajadOlem() {
         final String tabeliNimi = "kasutajad";
 
@@ -94,9 +114,9 @@ public class Andmebaas implements AutoCloseable {
         }
         final String looKasutajadOlem =
                 "CREATE TABLE " + tabeliNimi + " (" +
-                "kasutaja_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
-                "nimi VARCHAR(100) NOT NULL UNIQUE" +
-                ");";
+                        "kasutaja_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
+                        "nimi VARCHAR(100) NOT NULL UNIQUE" +
+                        ");";
 
         try (Statement looKasutajadOlemLause = andmebaas.createStatement()){
             looKasutajadOlemLause.executeUpdate(looKasutajadOlem);
@@ -106,6 +126,9 @@ public class Andmebaas implements AutoCloseable {
         }
     }
 
+    /**
+     * Neetid abdnebaasu ülesannete tabeli loomiseks, kui see puudub andmebaasist.
+     */
     public void looUlesandedOlem() {
         final String tabeliNimi = "ulesanded";
 
@@ -116,12 +139,12 @@ public class Andmebaas implements AutoCloseable {
 
         final String looUlesandedOlem =
                 "CREATE TABLE " + tabeliNimi + " (" +
-                "ulesanne_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
-                "ulesanne_nimi VARCHAR(100) NOT NULL," +
-                "kasutaja_id INT NOT NULL," +
-                "FOREIGN KEY (kasutaja_id) REFERENCES kasutajad(kasutaja_id)," +
-                "CONSTRAINT kasutajal_ainulaadsed_ulesanded UNIQUE (ulesanne_nimi, kasutaja_id)" +
-                ");";
+                        "ulesanne_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
+                        "ulesanne_nimi VARCHAR(100) NOT NULL," +
+                        "kasutaja_id INT NOT NULL," +
+                        "FOREIGN KEY (kasutaja_id) REFERENCES kasutajad(kasutaja_id)," +
+                        "CONSTRAINT kasutajal_ainulaadsed_ulesanded UNIQUE (ulesanne_nimi, kasutaja_id)" +
+                        ");";
 
         try (Statement looUlesandedOlemLause = andmebaas.createStatement()) {
             looUlesandedOlemLause.executeUpdate(looUlesandedOlem);
@@ -131,6 +154,9 @@ public class Andmebaas implements AutoCloseable {
         }
     }
 
+    /**
+     * Meetod pomodorode tabeli loomiseks, kui see andmebaasist puudub
+     */
     public void looPomodorodOlem() {
         final String tabeliNimi = "pomodorod";
 
@@ -141,15 +167,15 @@ public class Andmebaas implements AutoCloseable {
 
         final String looPomodorodOlem =
                 "CREATE TABLE " + tabeliNimi + " (" +
-                "pomodoro_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
-                "produktiivne_aeg INTERVAL NOT NULL," +
-                "puhke_aeg INTERVAL NOT NULL," +
-                "kordused INT," +
-                "produktiivne_aeg_kokku INTERVAL," +
-                "ulesanne_id INT NOT NULL," +
-                "sisestuse_aeg TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                "FOREIGN KEY (ulesanne_id) REFERENCES ulesanded(ulesanne_id)" +
-                ");";
+                        "pomodoro_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
+                        "produktiivne_aeg INTERVAL NOT NULL," +
+                        "puhke_aeg INTERVAL NOT NULL," +
+                        "kordused INT," +
+                        "produktiivne_aeg_kokku INTERVAL," +
+                        "ulesanne_id INT NOT NULL," +
+                        "sisestuse_aeg TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                        "FOREIGN KEY (ulesanne_id) REFERENCES ulesanded(ulesanne_id)" +
+                        ");";
 
         try (Statement looUlesandedOlemLause = andmebaas.createStatement()) {
             looUlesandedOlemLause.executeUpdate(looPomodorodOlem);
@@ -159,6 +185,11 @@ public class Andmebaas implements AutoCloseable {
         }
     }
 
+    /**
+     * Meetod andmebaasi tabeli kontrollimiseks
+     * @param olemiNimi Parameetriks soovitud tabeli nimi
+     * @return Tagastab "true", kui tabel on andmebaasis olemas
+     */
     public boolean kasOlemOlemas(String olemiNimi) {
         try {
             DatabaseMetaData metaAndmed = andmebaas.getMetaData();
@@ -171,10 +202,15 @@ public class Andmebaas implements AutoCloseable {
         }
     }
 
+    /**
+     * Meetod uue kasutaja loomiseks andmebaasi kasutajate tabelis
+     * @param kasutajaNimi Parameetriks soovitud kasutaja nimi
+     * @return Tagastab kasutajaID
+     */
     public int lisaUusKasutaja(String kasutajaNimi) {
         final String lisaUusKasutaja =
                 "INSERT INTO kasutajad (nimi) " +
-                "VALUES (?)";
+                        "VALUES (?)";
         int kasutajaID = -1;  // Näitab kasutaja loomise ebaõnnestumist
 
         try (PreparedStatement lisaUusKasutajaLause =
@@ -188,6 +224,11 @@ public class Andmebaas implements AutoCloseable {
         return kasutajaID;
     }
 
+    /**
+     * Meetod andmebaasi kasutaja lisamisel, et saada sama kasutaja isend
+     * @param kasutajaNimi Sama parameeter, võtab kasutaja nime
+     * @return Tagastab kasutaja isendi
+     */
     public Kasutaja looUusKasutaja(String kasutajaNimi) {
         int kasutajaID = lisaUusKasutaja(kasutajaNimi);
         if (kasutajaID == -1) return null;
@@ -195,10 +236,16 @@ public class Andmebaas implements AutoCloseable {
         return new Kasutaja(kasutajaID, kasutajaNimi);
     }
 
+    /**
+     * Sama meetod mis kasutaja puhul, loob andmebaasi ülesande veeru. Järgnev meetod tagastab ka ülesande isendi
+     * @param ulesandeNimi Parameeter ülesande nime määramiseks
+     * @param kasutajaID Parameeter kasutaja ID jaoks, et määrata ülesandele kasutaja kuuluvus
+     * @return tagastab ülesandeID
+     */
     public int lisaUusUlesanne(String ulesandeNimi, int kasutajaID) {
         final String lisaUusUlesanne =
                 "INSERT INTO ulesanded (ulesanne_nimi, kasutaja_id) " +
-                "VALUES (?, ?)";
+                        "VALUES (?, ?)";
         int ulesandeID = -1;  // Näitab ülesande loomise ebaõnnestumist
 
         try (PreparedStatement lisaUusUlesanneLause =
@@ -223,10 +270,17 @@ public class Andmebaas implements AutoCloseable {
         return ulesanne;
     }
 
+    /**
+     * Sama meetod, loob pomodoro veeru andmebaasi. Järgnev meetod loob ka sama pomodoro taimeri isendi
+     * @param produktiivneAeg Parameeter produktiivse aja taimeri määramiseks
+     * @param puhkeAeg Parameeter puhkeaja taimeri määramiseks
+     * @param ulesanneID Parameeter ülesande ID jaoks, et määrata taimerile ülesande kuuluvus
+     * @return Tagastab pomodoroID
+     */
     public int lisaUusPomodoro(Duration produktiivneAeg, Duration puhkeAeg, int ulesanneID) {
         final String lisaUusPomodoro =
                 "INSERT INTO pomodorod (produktiivne_aeg, puhke_aeg, ulesanne_id) " +
-                "VALUES (?, ?, ?)";
+                        "VALUES (?, ?, ?)";
         int pomodoroID = -1;
 
         try (PreparedStatement lisaUusPomodoroLause =
@@ -289,11 +343,15 @@ public class Andmebaas implements AutoCloseable {
         return olemiID;
     }
 
+    /**
+     * Meetod kasutajate isendite näitamiseks andmebaasist
+     * @return Tagastab listi kasutajatest
+     */
     public ArrayList<Kasutaja> tagastaKasutajateOlemid() {
         ArrayList<Kasutaja> kasutajad = new ArrayList<Kasutaja>();
         final String tagastaKasutajateOlemid =
                 "SELECT kasutaja_id, nimi " +
-                "FROM kasutajad";
+                        "FROM kasutajad";
 
         try (PreparedStatement tagastaKasutajateOlemidLause = andmebaas.prepareStatement(tagastaKasutajateOlemid)) {
             try (ResultSet tagastaOlemidLauseTulem = tagastaKasutajateOlemidLause.executeQuery()) {
@@ -313,12 +371,17 @@ public class Andmebaas implements AutoCloseable {
         return kasutajad;
     }
 
+    /**
+     * Meetod ülesannete isendite näitamiseks andmebaasist
+     * @param kasutajaID Parameetriks kasutaja, kellele ülesanded kuuluvad
+     * @return Tagastab listi kasutaja ülesannetest
+     */
     public ArrayList<Ulesanne> tagastaUlesanneteOlemid(int kasutajaID){
         ArrayList<Ulesanne> ulesanded = new ArrayList<Ulesanne>();
         final String tagastaUlesanneteOlemid =
                 "SELECT ulesanne_id, ulesanne_nimi " +
-                "FROM ulesanded " +
-                "WHERE kasutaja_id = ?";
+                        "FROM ulesanded " +
+                        "WHERE kasutaja_id = ?";
 
         try (PreparedStatement tagastaUlesanneteOlemidLause = andmebaas.prepareStatement(tagastaUlesanneteOlemid)) {
             tagastaUlesanneteOlemidLause.setInt(1, kasutajaID);
@@ -340,13 +403,18 @@ public class Andmebaas implements AutoCloseable {
         return ulesanded;
     }
 
+    /**
+     * Meetod pomodoro isendite näitamiseks andmebaasist
+     * @param ulesanneID Parameetriks ülesanne, millele pomodorod kuuluvad
+     * @return Tagastab listi ülesande pomodoro taimeritest
+     */
     public ArrayList<Pomodoro> tagastaPomodorodeOlemid(int ulesanneID) {
         ArrayList<Pomodoro> pomodorod = new ArrayList<>();
         final String tagastaPomodorodeOlemid =
                 "SELECT pomodoro_id, produktiivne_aeg, puhke_aeg, kordused, " +
-                "produktiivne_aeg_kokku, sisestuse_aeg " +
-                "FROM pomodorod " +
-                "WHERE ulesanne_ID = ? ";
+                        "produktiivne_aeg_kokku, sisestuse_aeg " +
+                        "FROM pomodorod " +
+                        "WHERE ulesanne_ID = ? ";
 
         try (PreparedStatement tagastaPomodorodeOlemidLause = andmebaas.prepareStatement(tagastaPomodorodeOlemid)) {
             tagastaPomodorodeOlemidLause.setInt(1, ulesanneID);
