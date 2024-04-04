@@ -29,6 +29,10 @@ public class Andmebaas implements AutoCloseable {
         this("postgres", "sql", "pomodoro");
     }
 
+    public Andmebaas(String kasutaja, String parool) {
+        this(kasutaja, parool, "pomodoro");
+    }
+
     /**
      * Meetod andmebaasiga ühendamiseks, et andmebaasist andmeid saada
      * @param kasutaja Parameeter kasutaja andmebaasi kasutajanime jaoks, enamasti "postgres"

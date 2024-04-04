@@ -3,11 +3,14 @@ import java.util.Scanner;
 
 public class TestProgramm {
     public static void main(String[] args) {
-        try (Andmebaas andmebaas = new Andmebaas()) {
-            try (Scanner luger = new Scanner(System.in)) {
-                KonsooliFunktsioonid.konsooliSuurus(luger, "Programmi käivitamiseks vajuta enter");
+
+        try (Scanner luger = new Scanner(System.in)) {
+            KonsooliFunktsioonid.looRGB();
+            KonsooliFunktsioonid.konsooliSuurus(luger, "Programmi käivitamiseks vajuta enter");
+            luger.nextLine();
+            String[] andmed = Programm.kusiAndmebaasiAndmed(luger);
+            try (Andmebaas andmebaas = new Andmebaas(andmed[0], andmed[1])) {
                 Programm.loeAndmedMallu(andmebaas);
-                KonsooliFunktsioonid.looRGB();
                 Programm.kasutajaValik(andmebaas, luger);
             }
         }

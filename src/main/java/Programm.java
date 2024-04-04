@@ -10,6 +10,32 @@ public class Programm {
     public static final ArrayList<String> uusSoned = new ArrayList<>(Arrays.asList("uus"));
     public static ArrayList<Kasutaja> kasutajad;
 
+    public static String[] kusiAndmebaasiAndmed(Scanner luger) {
+        CLISisend kasutajanimiSisend = new CLISisend("Kasutajanimi: ", CLITeema.TEKSTI_VARV, 2);
+        CLISisend paroolSisend = new CLISisend("Parool: ", CLITeema.TEKSTI_VARV, 2);
+
+        CLIAknaElement[] elemendid = {kasutajanimiSisend, paroolSisend};
+        CLIAken aken = new CLIAken("PostgreSQL andmebaas", elemendid, 4, 2);
+        CLIValjund valjund = new CLIValjund();
+
+        int aknaLaius = 75;
+        int x = (KonsooliFunktsioonid.getKonsooliLaius() - aknaLaius) / 2;
+        int y = (KonsooliFunktsioonid.getKonsooliPikkus() - aken.valjastaElemendiPikkus()) / 2;
+
+        valjund.lisaValjundisse(KonsooliFunktsioonid.puhastaKonsool());
+        valjund.lisaValjundisse(aken.looCLIElement(x, y, 75));
+        valjund.lisaValjundisse(kasutajanimiSisend.taastaKursoriAsukoht());
+        valjund.valjastaValjund();
+
+        String kasutajanimi = luger.nextLine();
+
+        valjund.lisaValjundisse(paroolSisend.taastaKursoriAsukoht());
+        valjund.valjastaValjund();
+        String parool = luger.nextLine();
+        return new String[]{kasutajanimi, parool};
+
+    }
+
     public static void loeAndmedMallu(Andmebaas andmebaas) {
         kasutajad = andmebaas.tagastaKasutajateOlemid();
         for (Kasutaja kasutaja : kasutajad) {
