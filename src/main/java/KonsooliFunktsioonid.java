@@ -10,7 +10,7 @@ public class KonsooliFunktsioonid {
     public static int[] roheline = new int[1530];
     public static int[] sinine = new int[1530];
 
-    public static int[] konsooliSuurus(String sonum) {
+    public static int[] konsooliSuurus(Scanner luger, String sonum) {
         CLIValjund valjund = new CLIValjund();
         valjund.lisaValjundisse(EscKoodid.peidaKursor());
         valjund.lisaValjundisse(EscKoodid.muudaKursoriAsukohta(0, 0));
@@ -18,7 +18,7 @@ public class KonsooliFunktsioonid {
         valjund.lisaValjundisse(EscKoodid.muudaKursoriAsukohta(5000, 5000));
         valjund.valjastaValjund();
 
-        int[] koordinaadid = tagastaKursoriAsukoht(sonum);
+        int[] koordinaadid = tagastaKursoriAsukoht(luger, sonum);
         konsooliPikkus = koordinaadid[0];
         konsooliLaius = koordinaadid[1];
 
@@ -30,18 +30,25 @@ public class KonsooliFunktsioonid {
         return koordinaadid;
     }
 
-    public static int[] tagastaKursoriAsukoht(String sonum) {
+    public static String puhastaKonsool() {
+        return EscKoodid.peidaKursor() +
+                EscKoodid.salvestaKursoriAsukoht() +
+                EscKoodid.muudaKursoriAsukohta(0, 0) +
+                EscKoodid.kustutaValjundAlatesKursorist() +
+                EscKoodid.taastaKursoriAsukoht() +
+                EscKoodid.naitaKursor();
+    }
+
+    public static int[] tagastaKursoriAsukoht(Scanner luger, String sonum) {
         CLIValjund valjund = new CLIValjund();
         valjund.lisaValjundisse(EscKoodid.tagastaKursoriAsukoht());
         String koordinaadid;
-        try (Scanner luger = new Scanner(System.in)) {
-            valjund.valjastaValjund();
+        valjund.valjastaValjund();
 
-            valjund.lisaValjundisse(String.format(" %s - ", sonum));
-            valjund.valjastaValjund();
+        valjund.lisaValjundisse(String.format(" %s - ", sonum));
+        valjund.valjastaValjund();
 
-            koordinaadid = luger.next();
-        }
+        koordinaadid = luger.next();
 
         return teisendaKoordinaatideks(koordinaadid);
     }

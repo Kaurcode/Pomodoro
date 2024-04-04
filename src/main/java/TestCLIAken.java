@@ -9,7 +9,7 @@ public class TestCLIAken {
         CLITekst konsooliTekst = new CLITekst("See on testaken, proovi lahedaid asju!", CLITeema.TEKSTI_VARV,
                 true);
 
-        KonsooliFunktsioonid.konsooliSuurus("Programmi käivitamiseks vajuta enter");
+        // KonsooliFunktsioonid.konsooliSuurus("Programmi käivitamiseks vajuta enter");
 
         ArrayList<CLINimekirjaElement> nimekirjaElemendid = new ArrayList<CLINimekirjaElement>();
         for (int i = 0; i < 60; i++) {
@@ -36,10 +36,10 @@ public class TestCLIAken {
         int y = (KonsooliFunktsioonid.getKonsooliPikkus() - konsooliAken.valjastaElemendiPikkus()) / 2;
 //        System.out.print(konsooliAken.looCLIElement(x, y, minLaius));
 
-        Taimer taimer = new Taimer(Duration.ofSeconds(25));
         CLIEdenemisRiba edenemisRiba = new CLIEdenemisRiba(1, 0);
         CLIAknaElement[] elemendid = {edenemisRiba};
         CLIAken uusKonsooliAken = new CLIAken("", elemendid, 2, 1);
+        Taimer taimer = new Taimer(Duration.ofSeconds(25), uusKonsooliAken, edenemisRiba);
 
         x = (KonsooliFunktsioonid.getKonsooliLaius() - minLaius) / 2;
         y = (KonsooliFunktsioonid.getKonsooliPikkus() - uusKonsooliAken.valjastaElemendiPikkus()) / 2;

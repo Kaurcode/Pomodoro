@@ -26,7 +26,7 @@ public class Andmebaas implements AutoCloseable {
     }
 
     public Andmebaas() {
-        this("postgres", "parool", "pomodoro");
+        this("postgres", "sql", "pomodoro");
     }
 
     /**

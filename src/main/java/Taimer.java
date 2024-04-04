@@ -8,12 +8,16 @@ public class Taimer {
     private Timer taimer;
     private TimerTask loendaja;
     private float protsent;
+    private CLIAken aken;
+    private CLIEdenemisRiba edenemisRiba;
 
-    public Taimer(Duration aeg) {
+    public Taimer(Duration aeg, CLIAken aken, CLIEdenemisRiba edenemisRiba) {
         this.aegMs = aeg.toMillis();
         this.loendus = this.aegMs;
         this.taimer = new Timer();
         this.loendaja = looLoendaja();
+        this.aken = aken;
+        this.edenemisRiba = edenemisRiba;
     }
 
     private TimerTask looLoendaja() {
@@ -22,6 +26,8 @@ public class Taimer {
             public void run() {
                 loendus -= 10;
                 protsent = 100 - Math.max(0, 100 * ((float) loendus / aegMs));
+                edenemisRiba.setProtsent(protsent);
+                System.out.print(aken.uuendaCLIElement());
             }
         };
     }

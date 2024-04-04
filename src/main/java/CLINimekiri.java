@@ -30,7 +30,7 @@ public class CLINimekiri implements CLIAknaElement {
 
     @Override
     public String looCLIElement(int xKoordinaat, int yKoordinaat, int laius) {
-        this.laius = Math.min(laius, this.laius);
+        this.laius = Math.max(laius, this.laius);
         StringBuilder menuuElement = new StringBuilder();
 
         int elementeVeerus = (int) Math.ceil((double) elemendid.size() / veerge);

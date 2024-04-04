@@ -31,6 +31,10 @@ public class Kasutaja implements Comparable<Kasutaja> {
         this.ulesanded.addAll(ulesanded);
     }
 
+    public ArrayList<Ulesanne> getUlesanded() {
+        return ulesanded;
+    }
+
     @Override
     public String toString() {
         return nimi;
