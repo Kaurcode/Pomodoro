@@ -6,10 +6,11 @@ import java.util.regex.Pattern;
 public class Programm {
     public static final ArrayList<String> lopetusSoned =
             new ArrayList<>(Arrays.asList("exit", "close", "lõpeta", "lopeta", "sule", "lahku"));
-    public static final ArrayList<String> tagasiSoned = new ArrayList<>(Arrays.asList("back", "tagasi", "eelmine"));
-    public static final ArrayList<String> uusSoned = new ArrayList<>(Arrays.asList("uus"));
-    public static ArrayList<Kasutaja> kasutajad;
-
+    /**
+     * Küsib andmebaasi andmed, et saaks luua andmebaasiga ühenduse
+     * @param luger Scanner klass sisendi lugemiseks
+     * @return Andmebaasi andmed
+     */
     public static String[] kusiAndmebaasiAndmed(Scanner luger) {
         CLISisend kasutajanimiSisend = new CLISisend("Kasutajanimi: ", CLITeema.TEKSTI_VARV, 2);
         CLISisend paroolSisend = new CLISisend("Parool: ", CLITeema.TEKSTI_VARV, 2);
@@ -35,7 +36,15 @@ public class Programm {
         return new String[]{kasutajanimi, parool};
 
     }
+    public static final ArrayList<String> tagasiSoned = new ArrayList<>(Arrays.asList("back", "tagasi", "eelmine"));
+    public static final ArrayList<String> uusSoned = new ArrayList<>(Arrays.asList("uus"));
 
+    public static ArrayList<Kasutaja> kasutajad;
+
+    /**
+     * Loeb andmebaasi andmed mällu -> loob olemitest vastavad objektid
+     * @param andmebaas Kasutatav andmebaas
+     */
     public static void loeAndmedMallu(Andmebaas andmebaas) {
         kasutajad = andmebaas.tagastaKasutajateOlemid();
         for (Kasutaja kasutaja : kasutajad) {
@@ -46,6 +55,12 @@ public class Programm {
         }
     }
 
+    /**
+     * Aken, mis kuvab võimalikke valikuid
+     * @param valikud Võimalikud valikd
+     * @param tuup Mis tüüpi valikud - Hetkel kas kasutaja või ülesanne?
+     * @return Sõned ja Escape koodid valikuakna loomiseks
+     */
     public static String valikuAken(ArrayList<CLINimekirjaElement> valikud, String tuup) {
         CLITekst valiKasutajaTekst = new CLITekst(String.format("Vali %s: ", tuup), CLITeema.TEKSTI_VARV, true);
         CLINimekiri kasutajateNimekiri = new CLINimekiri(valikud,
@@ -65,6 +80,11 @@ public class Programm {
         return KonsooliFunktsioonid.puhastaKonsool() + kasutjateAken.looCLIElement(x, y, minLaius);
     }
 
+    /**
+     * Aken, mis küsib uue isendi loomiseks vajalikku nime
+     * @param tuup Mis tüüpi objekti isend - hetkel kas kasutaja või ülesanne?
+     * @return Akna loomiseks vajalikud sõned ja Escape koodid
+     */
     public static String looUusObjektAken(String tuup) {
         CLITekst uusObjektTekst = new CLITekst(String.format("Sisesta uue %s nimi: ", tuup), CLITeema.TEKSTI_VARV, true);
 
@@ -81,19 +101,9 @@ public class Programm {
     }
 
     /**
-     * Meetod programmi alustamiseks, loob ühenduse andmebaasiga
-     *
-     * @return Andmebaasi isend edasiseks töötlemiseks
-     */
-    public static Andmebaas alustaProgramm() {
-        return new Andmebaas();
-    }
-
-    /**
-     * Meetod programmi esimese osa töötlemiseks, kasutaja, ülesande ja taimeri valik/loomine
-     *
-     * @param andmebaas Võtab argumendiks kasutatava andmebaasi
-     * @return Tagastab valitud või loodud taimeri isendi, mis kuulub kindlale kasutajale ja kindlale ülesandele
+     * Kasutajate näitamine ja valimnine
+     * @param andmebaas Kasutuselolev andmebaas
+     * @param luger Scanner klass sisendi lugemiseks
      */
     public static void kasutajaValik(Andmebaas andmebaas, Scanner luger) {
         ArrayList<CLINimekirjaElement> kasutajaNimed = new ArrayList<CLINimekirjaElement>();
@@ -129,6 +139,12 @@ public class Programm {
         }
     }
 
+    /**
+     * Kindla kasutaja ülesannete näitamine ja valimine
+     * @param andmebaas Kasutuselolev andmebaas
+     * @param luger Scanner klass sisendi lugemiseks
+     * @param kasutaja Millise kasutaja ülesandeid kuvatakse, valitakse?
+     */
     public static void ulesandeValik(Andmebaas andmebaas, Scanner luger, Kasutaja kasutaja) {
         CLITekst valiUlesanneTekst = new CLITekst("Vali ülesanne: ", CLITeema.TEKSTI_VARV, true);
         ArrayList<CLINimekirjaElement> ulesandeNimed = new ArrayList<CLINimekirjaElement>();
@@ -163,6 +179,12 @@ public class Programm {
         }
     }
 
+    /**
+     * Uue Pomodoro loomine - salvestab andmebaasi statistika loomise võimaluseks
+     * @param andmebaas Kasututuselolev andmebaas
+     * @param luger Scanner klass sisendi lugemiseks
+     * @param ulesanne Millisele ülesandele Pomodoro luuakse
+     */
     public static void uusPomodoro(Andmebaas andmebaas, Scanner luger, Ulesanne ulesanne) {
         CLISisend produktiivsusAjaSisend = new CLISisend("Sisesta produktiivsusaeg: ", CLITeema.TEKSTI_VARV, 2);
         CLISisend puhkeAjaSisend = new CLISisend("Sisesta puhkeaeg: ", CLITeema.TEKSTI_VARV, 2);
@@ -185,6 +207,12 @@ public class Programm {
 
     }
 
+    /**
+     * Taimeri loomine vastavale pomodorole
+     * @param andmebaas Kasutuselolev andmebaas
+     * @param luger Scanner klass sisendi lugemiseks
+     * @param pomodoro Pomodoro isend aega kasutamiseks
+     */
     public static void pomodoroTaimer(Andmebaas andmebaas, Scanner luger, Pomodoro pomodoro) {
         luger.nextLine();
         taimer(luger, pomodoro.getProduktiivneAeg(), "Produktiivne aeg");
@@ -195,6 +223,13 @@ public class Programm {
         }
     }
 
+    /**
+     * Taimeri loomine ja näitamine
+     * @param luger Scanner klass sisendi lugemiseks
+     * @param aeg Kui pikale ajale taimer määratakse
+     * @param tuup Mis tüüpi taimer -> Produktiivsus või puhkeaja?
+     * @return Kas pomodoro läheb kirja?
+     */
     public static boolean taimer(Scanner luger, Duration aeg, String tuup) {
         System.out.print(KonsooliFunktsioonid.puhastaKonsool() +
                 EscKoodid.muudaKursoriAsukohta(0, 0) + EscKoodid.salvestaKursoriAsukoht());
@@ -220,6 +255,11 @@ public class Programm {
         else return false;
     }
 
+    /**
+     * Küsimusaken -> kas käivitatakse taimer uuesti?
+     * @param luger Scanner klass sisendi lugemiseks
+     * @return tõeväärtus: true -> taimer käivitatakse uuesti
+     */
     public static boolean kasUuesti(Scanner luger) {
         CLISisend sisend = new CLISisend("Uuesti? ", CLITeema.TEKSTI_VARV, 2);
         CLIAknaElement[] elemendid = {sisend};
@@ -236,6 +276,11 @@ public class Programm {
         return false;
     }
 
+    /**
+     * Aken mingisuguse informatsiooni kuvamiseks kasutajale
+     * @param luger Scanner klass sisendi lugemiseks
+     * @param teade Vastav teade
+     */
     public static void teateAken(Scanner luger, String teade) {
         luger.nextLine();
         CLITekst tekst = new CLITekst(teade, CLITeema.TEKSTI_VARV, true);

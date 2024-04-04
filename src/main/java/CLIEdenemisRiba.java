@@ -3,11 +3,11 @@ public class CLIEdenemisRiba implements CLIAknaElement {
     int yKoordinaat;
     public boolean kasVajabUuendamist;
     private final static int HELEDA_AARE_PROTSENT = 50;
-    private int heledaAarePikkus;
+    private int heledaAarePikkus;  // Kui palju on heledat äärt paremas otsas
     private float protsent;
     private int ribaKaugus;
     private int laius;
-    private int animatsiooniJark;
+    private int animatsiooniJark;  // Mis järgus animatsioon on? -> et rgb värv saaks muutuda
     private int samm;
 
 
@@ -44,10 +44,15 @@ public class CLIEdenemisRiba implements CLIAknaElement {
         return edenemisRiba.toString();
     }
 
+    /**
+     * Joonistab edenemisrea vastavalt määratud protsendile ja animatsioonijärgule
+     * @return edenemisrea loomiseks/uuendamiseks vajalik sõne koos Escape koodidega
+     */
     public String joonistaRiba() {
         StringBuilder edenemisRiba = new StringBuilder();
         int iteratsioon = animatsiooniJark;
 
+        // RGB osa loomine
         edenemisRiba.append(EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat));
         for (int asukoht = 0; asukoht <= ribaKaugus - 1 - heledaAarePikkus; asukoht++) {
             while (iteratsioon < 0) {
@@ -60,6 +65,8 @@ public class CLIEdenemisRiba implements CLIAknaElement {
                     KonsooliFunktsioonid.punane[iteratsioon], KonsooliFunktsioonid.roheline[iteratsioon], KonsooliFunktsioonid.sinine[iteratsioon]));
             iteratsioon += samm;
         }
+
+        // Heleda osa loomine
         for (int asukoht = ribaKaugus - heledaAarePikkus; asukoht <= ribaKaugus - 1; asukoht++) {
             if (asukoht < 0) { continue; }
             while (iteratsioon < 0) {

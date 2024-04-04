@@ -15,7 +15,7 @@ public class ProgrammKoopia {
         }
         return kasutajad;
     }
-    /**
+    /Taimer.java
      * Meetod programmi alustamiseks, loob ühenduse andmebaasiga
      * @return Andmebaasi isend edasiseks töötlemiseks
      */

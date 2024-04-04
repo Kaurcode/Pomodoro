@@ -34,13 +34,23 @@ public class CLIAken implements CLIAknaElement {
         }
     }
 
+    /**
+     * Loob CLI akna
+     * @param xKoordinaat Akna vasaku ülemise nurga x koordinaat
+     * @param yKoordinaat Akna vasaku ülemise nurga y koordinaat
+     * @param minLaius Minimaalne laius, mis aknal on (aknale määratud elementidele akna laius võib olla suurem)
+     * @return
+     */
     @Override
     public String looCLIElement(int xKoordinaat, int yKoordinaat, int minLaius) {
+        // Tegelik akna laius -> kui elemente rohkem, siis suurem aken
         this.laius = Math.min(Math.max(minLaius, this.suurimElemendiLaius + 2 * xPuhver),
                 KonsooliFunktsioonid.getKonsooliLaius());
 
+        // Uus x-i koordinaat vastavalt muutunud laiusele
         xKoordinaat -= (this.laius - minLaius) / 2;
 
+        // Akna piirjoonte loomine
         String horisontaalneLairiba = CLITeema.HORISONTAALNE_RIBA.repeat(laius - 2);
         String vertikaalsedLairibad = CLITeema.VERTIKAALNE_RIBA + " ".repeat(laius - 2)
                 + CLITeema.VERTIKAALNE_RIBA;
@@ -69,6 +79,7 @@ public class CLIAken implements CLIAknaElement {
                 .append(horisontaalneLairiba)
                 .append(CLITeema.NURK_4);
 
+        // Lisa elemendid aknasse
         int pikkus = 0;
         for (CLIAknaElement element : CLIElemendid) {
             aken.append(element.looCLIElement(xKoordinaat + xPuhver,
@@ -87,6 +98,10 @@ public class CLIAken implements CLIAknaElement {
         return laius;
     }
 
+    /**
+     * Uuendab akna sees olevad elemendid vastavalt vajadusele -> vajalik taimeri jaoks
+     * @return uuendatud elementide uuendamise Escape koodid ning sõned
+     */
     @Override
     public String uuendaCLIElement() {
         StringBuilder uuendus = new StringBuilder();

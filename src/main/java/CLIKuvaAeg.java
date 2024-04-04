@@ -29,6 +29,7 @@ public class CLIKuvaAeg implements CLIAknaElement{
 
     public String kuvaAeg() {
 
+        // Kas taimer on üle aja läinud?
         char mark = switch(Long.signum(aegS)) {
             case 1 -> '-';
             case -1 -> '+';

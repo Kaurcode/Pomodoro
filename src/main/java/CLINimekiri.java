@@ -8,7 +8,7 @@ public class CLINimekiri implements CLIAknaElement {
     final int ELEMENTIDE_VAHELINE_LAIUS = 3;
     final int RIDU_ELEMENTIDE_VAHEL = 1;
     final int MARGI_PIKKUSE_LAIUSE_SUHE = 2;  // Konsooli märgi pikkuse-laiuse suhe 1:2
-    final int RISTKULIKU_KULGEDE_SUHE = 2;  // Nimekirjast mooodustub ristkülik
+    final int RISTKULIKU_KULGEDE_SUHE = 2;  // Nimekirjast moodustub ristkülik
 
     String valikuVarv;
     String kasuVarv;
@@ -63,6 +63,10 @@ public class CLINimekiri implements CLIAknaElement {
         return this.laius;
     }
 
+    /**
+     * Leiab kõige suurema elemendi laiuse -> selle järgi võtab veeru laiuse
+     * @return suurima elemendi laius
+     */
     public int suurimaElemendiLaius() {
         int suurimaElemendiLaius = 0;
         for (CLINimekirjaElement element : elemendid) {
@@ -72,12 +76,18 @@ public class CLINimekiri implements CLIAknaElement {
         return suurimaElemendiLaius;
     }
 
+    /**
+     * Arvutab veergude arvu. Võrrand on loodud nii, et nimekirja elemendid oleksid võimalikult hästi paigutatud
+     * ristküliku kujuliselt, mille külgede suhe on 2:1
+     */
     private void arvutaVeergudeArv() {
         double nimekirjaPikkus = elemendid.size() * (1 + RIDU_ELEMENTIDE_VAHEL)
                 * MARGI_PIKKUSE_LAIUSE_SUHE * RISTKULIKU_KULGEDE_SUHE;
         double nimekirjaLaius = (suurimaElemendiLaius() + ELEMENTIDE_VAHELINE_LAIUS);
+
+        // Nimekirja (kokkuliidetud veerud) laius ei tohi olla suurem konsooliakna laius
         int maksimaalneVeergudeArv = (int) (KonsooliFunktsioonid.getKonsooliLaius() / nimekirjaLaius);
-        // this.veerge = Math.min((int) Math.ceil(nimekirjaPikkus / nimekirjaLaius), maksimaalneVeergudeArv);
+
         this.veerge = (int) Math.min(Math.ceil(Math.sqrt(nimekirjaPikkus / nimekirjaLaius)), maksimaalneVeergudeArv);
         this.laius = (int) (nimekirjaLaius * veerge) + ELEMENTIDE_VAHELINE_LAIUS;
     }

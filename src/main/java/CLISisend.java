@@ -21,6 +21,10 @@ public class CLISisend implements CLIAknaElement {
                 tekstiVarv + tekst + EscKoodid.salvestaKursoriAsukoht();
     }
 
+    /**
+     * Paigutab kursori tagasi õigesse kohta (kui nt kasutatakse ühes aknas mitut sisendit)
+     * @return
+     */
     public String taastaKursoriAsukoht() {
         return EscKoodid.muudaKursoriAsukohta(kursoriAlgusKohtY, kursoriAlgusKohtX)
                 + CLITeema.AKNA_TAUST;

@@ -22,6 +22,10 @@ public class Taimer {
         this.ajaKuvar = ajaKuvar;
     }
 
+    /**
+     * Loob TimerTask objekti, mida käitatakse iga mingisuguse aja tagant
+     * @return Timertask objekt
+     */
     private TimerTask looLoendaja() {
         return new TimerTask() {
             @Override

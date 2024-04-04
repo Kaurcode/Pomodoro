@@ -10,6 +10,13 @@ public class KonsooliFunktsioonid {
     public static int[] roheline = new int[1530];
     public static int[] sinine = new int[1530];
 
+    /**
+     * Salvestab konsooli suuruse
+     * https://stackoverflow.com/questions/1286461/can-i-find-the-console-width-with-java
+     * @param luger Scanner objekt, et küsida suurust
+     * @param sonum Kasutajale väljastatav sõnum
+     * @return Konsooli pikkus ja laius
+     */
     public static int[] konsooliSuurus(Scanner luger, String sonum) {
         CLIValjund valjund = new CLIValjund();
         valjund.lisaValjundisse(EscKoodid.peidaKursor());
@@ -30,6 +37,10 @@ public class KonsooliFunktsioonid {
         return koordinaadid;
     }
 
+    /**
+     * Kustutab konsooli väljundi -> puhas ekraan
+     * @return Kustutamiseks vajalikud Escape koodid
+     */
     public static String puhastaKonsool() {
         return EscKoodid.peidaKursor() +
                 EscKoodid.salvestaKursoriAsukoht() +
@@ -39,6 +50,12 @@ public class KonsooliFunktsioonid {
                 EscKoodid.naitaKursor();
     }
 
+    /**
+     * Tagastab kursori asukoha koordinaadid
+     * @param luger Scanner objekt, et küsida suurust
+     * @param sonum Kasutajale väljastatav sõnum
+     * @return Kursori asukoha koordinaadid
+     */
     public static int[] tagastaKursoriAsukoht(Scanner luger, String sonum) {
         CLIValjund valjund = new CLIValjund();
         valjund.lisaValjundisse(EscKoodid.tagastaKursoriAsukoht());
@@ -53,6 +70,11 @@ public class KonsooliFunktsioonid {
         return teisendaKoordinaatideks(koordinaadid);
     }
 
+    /**
+     * Teisendab kursori asukoha tagastusel saadud Escape koodi koordinaatideks
+     * @param sisend Sisestatud sisend (peaks sisaldama Escape koodi)
+     * @return Kursori koordinaadid täisarvudena (loetaval kujul)
+     */
     public static int[] teisendaKoordinaatideks(String sisend) {
         int[] koordinaadid = {-1, -1};
 
@@ -80,6 +102,9 @@ public class KonsooliFunktsioonid {
         return konsooliPikkus;
     }
 
+    /**
+     * Loob RGB värvide jaosk järjendi (kasutatav progressireal)
+     */
     public static void looRGB() {
         // 1. samm: Punane -> Kollane
         for (int i = 0; i < 255; i++) {

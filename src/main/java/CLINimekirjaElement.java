@@ -1,6 +1,6 @@
 public class CLINimekirjaElement implements CLIAknaElement {
     private String tekst;
-    private int indeks;
+    private int indeks;  // Asukoht nimekirjas
     private int laius;
 
     public enum Tuup {
