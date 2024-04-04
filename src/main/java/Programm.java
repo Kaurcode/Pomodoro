@@ -47,7 +47,7 @@ public class Programm {
         CLIAken sisendiAken = new CLIAken("", sisendiAknaSisu, 2, 1);
 
         CLIAknaElement[] aknaElemendid = {uusObjektTekst, sisendiAken};
-        CLIAken aken = new CLIAken("Uus kasutaja", aknaElemendid, 4, 2);
+        CLIAken aken = new CLIAken(String.format("Uus %s", tuup), aknaElemendid, 4, 2);
         int aknaLaius = 75;
         int x = (KonsooliFunktsioonid.getKonsooliLaius() - aknaLaius) / 2;
         int y = (KonsooliFunktsioonid.getKonsooliPikkus() - aken.valjastaElemendiPikkus()) / 2;
@@ -86,12 +86,11 @@ public class Programm {
 
         String sisend = luger.next();
 
-        if (kasutajateValik.containsKey(sisend)) {
-            ulesandeValik(andmebaas, luger, kasutajateValik.get(sisend));
-        } else if (lopetusSoned.contains(sisend)) {
-            System.exit(0);
+
+        if (lopetusSoned.contains(sisend)) {
+            //System.exit(0);
         } else if (tagasiSoned.contains(sisend)) {
-            System.exit(0);
+            // System.exit(0);
         } else if (uusSoned.contains(sisend)) {
 
             valjund.lisaValjundisse(looUusObjektAken("kasutaja"));
@@ -99,6 +98,8 @@ public class Programm {
             sisend = luger.next();
             kasutajad.add(andmebaas.looUusKasutaja(sisend));
             kasutajaValik(andmebaas, luger);
+        } else if (kasutajateValik.containsKey(sisend)) {
+            ulesandeValik(andmebaas, luger, kasutajateValik.get(sisend));
         }
     }
 
@@ -122,9 +123,9 @@ public class Programm {
         String sisend = luger.next();
 
         if (ulesanneteValik.containsKey(sisend)) {
-            alustaPomodorot(andmebaas, luger, ulesanneteValik.get(sisend));
+            uusPomodoro(andmebaas, luger, ulesanneteValik.get(sisend));
         } else if (lopetusSoned.contains(sisend)) {
-            System.exit(0);
+            // System.exit(0);
         } else if (tagasiSoned.contains(sisend)) {
             kasutajaValik(andmebaas, luger);
         } else if (uusSoned.contains(sisend)) {
@@ -136,7 +137,7 @@ public class Programm {
         }
     }
 
-    public static void alustaPomodorot(Andmebaas andmebaas, Scanner luger, Ulesanne ulesanne) {
+    public static void uusPomodoro(Andmebaas andmebaas, Scanner luger, Ulesanne ulesanne) {
         CLISisend produktiivsusAjaSisend = new CLISisend("Sisesta produktiivsusaeg: ", CLITeema.TEKSTI_VARV, 2);
         CLISisend puhkeAjaSisend = new CLISisend("Sisesta puhkeaeg: ", CLITeema.TEKSTI_VARV, 2);
         CLIAknaElement[] sisendid = {produktiivsusAjaSisend, puhkeAjaSisend};
@@ -153,27 +154,39 @@ public class Programm {
         valjund.lisaValjundisse(puhkeAjaSisend.taastaKursoriAsukoht());
         valjund.valjastaValjund();
         Duration puhkeAeg = sisendiTeisendusAjaks(luger.next());
-        boolean kasTehtud = taimer(luger, produktiivneAeg);
-        taimer(luger, puhkeAeg);
+        Pomodoro pomodoro = andmebaas.looUusPomodoro(produktiivneAeg, puhkeAeg, ulesanne);
+        pomodoroTaimer(andmebaas, luger, pomodoro);
+
+    }
+
+    public static void pomodoroTaimer(Andmebaas andmebaas, Scanner luger, Pomodoro pomodoro) {
+        luger.nextLine();
+        taimer(luger, pomodoro.getProduktiivneAeg(), "Produktiivne aeg");
+        teateAken(luger, Lõpusõnad.lõpusõnad());
+        taimer(luger, pomodoro.getPuhkeAeg(), "Puhke aeg");
         if (kasUuesti(luger)) {
-            alustaPomodorot(andmebaas, luger, ulesanne);
+            pomodoroTaimer(andmebaas, luger, pomodoro);
         }
     }
 
-    public static boolean taimer(Scanner luger, Duration aeg) {
+    public static boolean taimer(Scanner luger, Duration aeg, String tuup) {
         System.out.print(KonsooliFunktsioonid.puhastaKonsool() +
                 EscKoodid.muudaKursoriAsukohta(0, 0) + EscKoodid.salvestaKursoriAsukoht());
-        luger.nextLine();
         CLIEdenemisRiba edenemisRiba = new CLIEdenemisRiba(1, 0);
-        CLIAknaElement[] elemendid = {edenemisRiba};
-        CLIAken aken = new CLIAken("", elemendid, 2, 1);
+        CLIAknaElement[] edenemisRibaElement = {edenemisRiba};
+        CLIAken edenemisRibaKast = new CLIAken("", edenemisRibaElement, 2, 1);
+
+        CLIKuvaAeg ajaKuvar = new CLIKuvaAeg(aeg.toMillis(), 1);
+        CLIAknaElement[] elemendid = {edenemisRibaKast, ajaKuvar};
+
+        CLIAken aken = new CLIAken(tuup, elemendid, 2, 1);
 
         int aknaLaius = 100;
         int x = (KonsooliFunktsioonid.getKonsooliLaius() - aknaLaius) / 2;
         int y = (KonsooliFunktsioonid.getKonsooliPikkus() - aken.valjastaElemendiPikkus()) / 2;
 
         System.out.print(aken.looCLIElement(x, y, aknaLaius));
-        Taimer taimer = new Taimer(aeg, aken, edenemisRiba);
+        Taimer taimer = new Taimer(aeg, aken, edenemisRiba, ajaKuvar);
         taimer.alustaLoendust();
         while (!luger.hasNextLine());
         taimer.lopetaLoendus();
@@ -184,7 +197,7 @@ public class Programm {
     public static boolean kasUuesti(Scanner luger) {
         CLISisend sisend = new CLISisend("Uuesti? ", CLITeema.TEKSTI_VARV, 2);
         CLIAknaElement[] elemendid = {sisend};
-        CLIAken aken = new CLIAken("", elemendid, 4, 2);
+        CLIAken aken = new CLIAken("Pomodoro tehtud", elemendid, 4, 2);
 
         int aknaLaius = 75;
         int x = (KonsooliFunktsioonid.getKonsooliLaius() - aknaLaius) / 2;
@@ -192,8 +205,23 @@ public class Programm {
 
         System.out.print(KonsooliFunktsioonid.puhastaKonsool() + aken.looCLIElement(x, y, aknaLaius));
 
-        if (luger.next().equals("jah")) return true;
+        String sisestatud = luger.next();
+        if (sisestatud.equals("jah") ||sisestatud.equals("Jah")) return true;
         return false;
+    }
+
+    public static void teateAken(Scanner luger, String teade) {
+        luger.nextLine();
+        CLITekst tekst = new CLITekst(teade, CLITeema.TEKSTI_VARV, true);
+        CLIAknaElement[] elemendid = {tekst};
+        CLIAken aken = new CLIAken("Teade", elemendid, 4, 2);
+
+        int aknaLaius = 75;
+        int x = (KonsooliFunktsioonid.getKonsooliLaius() - aknaLaius) / 2;
+        int y = (KonsooliFunktsioonid.getKonsooliPikkus() - aken.valjastaElemendiPikkus()) / 2;
+
+        System.out.print(KonsooliFunktsioonid.puhastaKonsool() + aken.looCLIElement(x, y, aknaLaius));
+        luger.nextLine();
     }
 
 

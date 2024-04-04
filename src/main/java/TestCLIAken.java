@@ -36,32 +36,32 @@ public class TestCLIAken {
         int y = (KonsooliFunktsioonid.getKonsooliPikkus() - konsooliAken.valjastaElemendiPikkus()) / 2;
 //        System.out.print(konsooliAken.looCLIElement(x, y, minLaius));
 
-        CLIEdenemisRiba edenemisRiba = new CLIEdenemisRiba(1, 0);
-        CLIAknaElement[] elemendid = {edenemisRiba};
-        CLIAken uusKonsooliAken = new CLIAken("", elemendid, 2, 1);
-        Taimer taimer = new Taimer(Duration.ofSeconds(25), uusKonsooliAken, edenemisRiba);
-
-        x = (KonsooliFunktsioonid.getKonsooliLaius() - minLaius) / 2;
-        y = (KonsooliFunktsioonid.getKonsooliPikkus() - uusKonsooliAken.valjastaElemendiPikkus()) / 2;
-        System.out.print(uusKonsooliAken.looCLIElement(x, y, minLaius));
-        Scanner luger = new Scanner(System.in);
-        taimer.alustaLoendust();
-        while (true) {
-            if (luger.hasNextLine()) {
-                taimer.lopetaLoendus();
-                break;
-            }
-            edenemisRiba.setProtsent(taimer.getProtsent());
-            if (uusKonsooliAken.kasVajabUuendamist()) {
-                System.out.print(uusKonsooliAken.uuendaCLIElement());
-                System.out.flush();
-            }
-
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException viga) {
-                System.out.println("Katkestus: " + viga.getMessage());
-            }
-        }
+//        CLIEdenemisRiba edenemisRiba = new CLIEdenemisRiba(1, 0);
+//        CLIAknaElement[] elemendid = {edenemisRiba};
+//        CLIAken uusKonsooliAken = new CLIAken("", elemendid, 2, 1);
+//        Taimer taimer = new Taimer(Duration.ofSeconds(25), uusKonsooliAken, edenemisRiba, );
+//
+//        x = (KonsooliFunktsioonid.getKonsooliLaius() - minLaius) / 2;
+//        y = (KonsooliFunktsioonid.getKonsooliPikkus() - uusKonsooliAken.valjastaElemendiPikkus()) / 2;
+//        System.out.print(uusKonsooliAken.looCLIElement(x, y, minLaius));
+//        Scanner luger = new Scanner(System.in);
+//        taimer.alustaLoendust();
+//        while (true) {
+//            if (luger.hasNextLine()) {
+//                taimer.lopetaLoendus();
+//                break;
+//            }
+//            edenemisRiba.setProtsent(taimer.getProtsent());
+//            if (uusKonsooliAken.kasVajabUuendamist()) {
+//                System.out.print(uusKonsooliAken.uuendaCLIElement());
+//                System.out.flush();
+//            }
+//
+//            try {
+//                Thread.sleep(10);
+//            } catch (InterruptedException viga) {
+//                System.out.println("Katkestus: " + viga.getMessage());
+//            }
+//        }
     }
 }

@@ -11,7 +11,5 @@ public class TestProgramm {
                 Programm.kasutajaValik(andmebaas, luger);
             }
         }
-        //Pomodoro taimer
-        Lõpusõnad.lõpusõnad();
     }
 }

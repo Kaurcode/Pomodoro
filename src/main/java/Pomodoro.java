@@ -41,4 +41,12 @@ public class Pomodoro implements Comparable<Pomodoro> {
     public int compareTo(Pomodoro vorreldavPomodoro) {
         return vorreldavPomodoro.getSisestusAeg().compareTo(this.getSisestusAeg());
     }
+
+    public Duration getProduktiivneAeg() {
+        return produktiivneAeg;
+    }
+
+    public Duration getPuhkeAeg() {
+        return puhkeAeg;
+    }
 }

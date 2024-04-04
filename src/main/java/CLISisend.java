@@ -17,11 +17,13 @@ public class CLISisend implements CLIAknaElement {
         kursoriAlgusKohtY = yKoordinaat;
 
         return EscKoodid.muudaKursoriAsukohta(yKoordinaat, xKoordinaat) +
+                CLITeema.AKNA_TAUST +
                 tekstiVarv + tekst + EscKoodid.salvestaKursoriAsukoht();
     }
 
     public String taastaKursoriAsukoht() {
-        return EscKoodid.muudaKursoriAsukohta(kursoriAlgusKohtY, kursoriAlgusKohtX);
+        return EscKoodid.muudaKursoriAsukohta(kursoriAlgusKohtY, kursoriAlgusKohtX)
+                + CLITeema.AKNA_TAUST;
     }
 
     @Override

@@ -4,7 +4,7 @@ public class Lõpusõnad {
     /**
      * Meetod randomi kasutamiseks, valib nimekirjast suvaliselt õnnitleva lause taimeri lõpu puhul.
      */
-    public static void lõpusõnad() {
+    public static String lõpusõnad() {
         int arv = (int) (Math.random() * 10);
         String[] laused = {"Tubli töö, pomodoro läbitud!",
         "Suurepärane töö, said hakkama!",
@@ -16,6 +16,6 @@ public class Lõpusõnad {
         "Ülesanded, hoidke alt! Siit tuleb produktiivsus ise!",
         "Haridusjumalad imetlevad sind kõrgelt!",
         "Oh sa poiss, milline produktiivne inimene!"};
-        System.out.println(laused[arv]);
+        return laused[arv];
     }
 }

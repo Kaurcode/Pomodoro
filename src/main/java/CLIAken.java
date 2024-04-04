@@ -92,6 +92,7 @@ public class CLIAken implements CLIAknaElement {
         StringBuilder uuendus = new StringBuilder();
         uuendus.append(EscKoodid.salvestaKursoriAsukoht());
         uuendus.append(EscKoodid.peidaKursor());
+        uuendus.append(CLITeema.AKNA_TAUST);
 
         for (CLIAknaElement cliElement : CLIElemendid) {
             if (cliElement.kasVajabUuendamist()) {
